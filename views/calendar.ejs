@@ -1,6 +1,15 @@
 <%- include("partials/header.ejs") %>
 
 <div class="container">
+    <h3>Meeting details</h3>
+    <ul>
+        <% meetingdata.forEach((line)=> { %>
+        <li>
+            <%=line %>
+        </li>
+    <%}) %>
+    </ul>
+
     <h3>Calendar invites</h3>
     <table class="table">
       <thead>

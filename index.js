@@ -32,25 +32,26 @@ app.get("/completed", (req, res) => {
 
 
 //Code for meeting details page
-const mtgArray = ["meetingTitle", "meetingDate","startTime", "endTime", "meetingVenue", "defaultSetting","daysAgenda","priorAgenda","daysClear","priorClear","daysSubmitMaterials","priorSubmitMaterials","daysCirculate","priorCirculate"]
-mtgArray.forEach((element) => {
-  var element = element;
-  console.log(element);
-});
-
-function meetingDetails(req, res, next) {
-  mtgArray.forEach((element) => {
-    element = req.body["element"];
-    console.log(element);
-});
-  next();
-}
-
 
 app.post("/submitdetails", (req, res) => {
-  app.use(meetingDetails);
-  res.render("calendar.ejs");
-  });
+    const meetingdata = {
+    title: "meetingTitle"
+    date: "meetingDate",
+    startTime: "startTime",
+    endTime: "endTime", 
+    venue: "meetingVenue", 
+    daysAgenda: "daysAgenda",
+    priorAgenda: "priorAgenda",
+    daysClear: "daysClear",
+    priorClear: "priorClear",
+    daysSubmitMaterials: "daysSubmitMaterials",
+    priorSubmitMaterials: "priorSubmitMaterials",
+    daysCirculate: "daysCirculate",
+    priorCirculate: "priorCirculate"
+  };
+  res.render("calendar.ejs", meetingdata);
+  console.log(meetingdata)
+});
 
 // Tells the app which port to run on
 app.listen(port, () => {
