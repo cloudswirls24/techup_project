@@ -62,8 +62,10 @@
         </tr>
       </tbody>
     </table>
-  
-    <a class="btn btn-primary" href="/email" role="button">Next</a>
+    <form action="/email" method="post">
+    <!-- <a class="btn btn-primary" href="/email" role="button">Next</a> -->
+    <input type="submit" class="btn btn-primary form-control" role="button" value="Next">
+    </form>
   </div>
 
 <%- include("partials/footer.ejs") %>

@@ -1,5 +1,8 @@
+<% if (locals.meetingTitle) { %>
 <strong><p>[Call for agenda] <%= meetingTitle %> </p></strong>
 
 <p>This is a call for agenda for the <%= meetingTitle %> on <%= meetingDate %>, <%= startTime %> - <%= endTime %> at <%= meetingVenue %>. Please indicate your item in the following format by <deadline>:</p>
 
 <p>Thank you.</p>
+
+<% } %>
