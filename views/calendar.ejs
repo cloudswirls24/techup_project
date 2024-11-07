@@ -2,13 +2,13 @@
 
 <div class="container">
     <h3>Meeting details</h3>
-    <% if (locals.meetingdetailsdata) { %>
+    <% if (locals.meetingTitle) { %>
     <ul>
-        <li><%= title %></li>;
+        <li><%= meetingTitle %></li>;
         <li><%= meetingDate %></li>;
         <li><%= startTime %></li>;
         <li><%= endTime %></li>;
-        <li><%= venue %></li>;
+        <li><%= meetingVenue %></li>;
         <li><%= daysAgenda %></li>;
         <li><%= priorAgenda %></li>;
         <li><%= daysClear %></li>;

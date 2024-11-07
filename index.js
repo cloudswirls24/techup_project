@@ -34,23 +34,25 @@ app.get("/completed", (req, res) => {
 //Code for meeting details page
 
 app.post("/calendar", (req, res) => {
-    const meetingdata = {
-    title: req.body["meetingTitle"],
-    meetingDate: req.body["meetingDate"],
-    startTime: req.body["startTime"],
-    endTime: req.body["endTime"], 
-    venue: req.body["meetingVenue"], 
-    daysAgenda: req.body["daysAgenda"],
-    priorAgenda: req.body["priorAgenda"],
-    daysClear: req.body["daysClear"],
-    priorClear: req.body["priorClear"],
-    daysSubmitMaterials: req.body["daysSubmitMaterials"],
-    priorSubmitMaterials: req.body["priorSubmitMaterials"],
-    daysCirculate: req.body["daysCirculate"],
-    priorCirculate: req.body["priorCirculate"],
-  };
-  res.render("calendar.ejs", {meetingdetailsdata: meetingdata});
-  console.log(meetingdata)
+  const {meetingTitle, meetingDate, startTime, endTime, meetingVenue, daysAgenda, priorAgenda, daysClear, priorClear, daysSubmitMaterials, priorSubmitMaterials, daysCirculate, priorCirculate} = req.body;
+ 
+  // const meetingdata = {
+  //   title: req.body["meetingTitle"],
+  //   meetingDate: req.body["meetingDate"],
+  //   startTime: req.body["startTime"],
+  //   endTime: req.body["endTime"], 
+  //   venue: req.body["meetingVenue"], 
+  //   daysAgenda: req.body["daysAgenda"],
+  //   priorAgenda: req.body["priorAgenda"],
+  //   daysClear: req.body["daysClear"],
+  //   priorClear: req.body["priorClear"],
+  //   daysSubmitMaterials: req.body["daysSubmitMaterials"],
+  //   priorSubmitMaterials: req.body["priorSubmitMaterials"],
+  //   daysCirculate: req.body["daysCirculate"],
+  //   priorCirculate: req.body["priorCirculate"],
+  // };
+  res.render("calendar.ejs", { meetingTitle, meetingDate, startTime, endTime, meetingVenue, daysAgenda, priorAgenda, daysClear, priorClear, daysSubmitMaterials, priorSubmitMaterials, daysCirculate, priorCirculate});
+  console.log(meetingTitle, meetingDate, startTime, endTime, meetingVenue, daysAgenda, priorAgenda, daysClear, priorClear, daysSubmitMaterials, priorSubmitMaterials, daysCirculate, priorCirculate)
 });
 
 // Tells the app which port to run on
