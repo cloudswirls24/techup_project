@@ -2,6 +2,7 @@
 
 <div class="container">
     <h3>Meeting details</h3>
+    <% if (locals.meetingdata) { %>
     <ul>
         <% meetingdata.forEach((line)=> { %>
         <li>
@@ -9,7 +10,8 @@
         </li>
     <%}) %>
     </ul>
-
+    <% } %>
+    
     <h3>Calendar invites</h3>
     <table class="table">
       <thead>
