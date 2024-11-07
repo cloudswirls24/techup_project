@@ -33,7 +33,7 @@ app.get("/completed", (req, res) => {
 
 //Code for meeting details page
 
-app.post("/submitdetails", (req, res) => {
+app.post("/calendar", (req, res) => {
     const meetingdata = {
     title: req.body["meetingTitle"],
     meetingDate: req.body["meetingDate"],
@@ -49,7 +49,7 @@ app.post("/submitdetails", (req, res) => {
     daysCirculate: req.body["daysCirculate"],
     priorCirculate: req.body["priorCirculate"],
   };
-  res.render("calendar.ejs", {meetingdata: meetingdata});
+  res.render("calendar.ejs", {meetingdetailsdata: meetingdata});
   console.log(meetingdata)
 });
 
