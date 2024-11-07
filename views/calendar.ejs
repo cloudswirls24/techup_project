@@ -8,14 +8,14 @@
         <li>Date: <%= meetingDate %></li>
         <li>Time: <%= startTime %> to <%= endTime %></li>
         <li>Venue: <%= meetingVenue %></li>
-        <li><%= daysAgenda %></li>
+        <!-- <li><%= daysAgenda %></li>
         <li><%= priorAgenda %></li>
         <li><%= daysClear %></li>
         <li><%= priorClear %></li>
         <li><%= daysSubmitMaterials %></li>
         <li><%= priorSubmitMaterials %></li>
         <li><%= daysCirculate %></li>
-        <li><%= priorCirculate %></li>
+        <li><%= priorCirculate %></li> -->
 
     <% } %>
     </ul>
@@ -62,10 +62,10 @@
         </tr>
       </tbody>
     </table>
-    <form action="/email" method="post">
-    <!-- <a class="btn btn-primary" href="/email" role="button">Next</a> -->
-    <input type="submit" class="btn btn-primary form-control" role="button" value="Next">
-    </form>
+    <!-- <form action="/email" method="post"> -->
+    <a class="btn btn-primary" href="/email" role="button">Next</a>
+    <!-- <input type="submit" class="btn btn-primary form-control" role="button" value="Next">
+    </form> -->
   </div>
 
 <%- include("partials/footer.ejs") %>
