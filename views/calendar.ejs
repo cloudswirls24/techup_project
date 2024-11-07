@@ -4,14 +4,23 @@
     <h3>Meeting details</h3>
     <% if (locals.meetingdata) { %>
     <ul>
-        <% meetingdata.forEach((line)=> { %>
-        <li>
-            <%=line %>
-        </li>
+        <li><%= title %></li>;
+        <li><%= meetingDate %></li>;
+        <li><%= startTime %></li>;
+        <li><%= endTime %></li>;
+        <li><%= venue %></li>;
+        <li><%= daysAgenda %></li>;
+        <li><%= priorAgenda %></li>;
+        <li><%= daysClear %></li>;
+        <li><%= priorClear %></li>;
+        <li><%= daysSubmitMaterials %></li>;
+        <li><%= priorSubmitMaterials %></li>;
+        <li><%= daysCirculate %></li>;
+        <li><%= priorCirculate %></li>;
+
     <%}) %>
     </ul>
-    <% } %>
-    
+
     <h3>Calendar invites</h3>
     <table class="table">
       <thead>
