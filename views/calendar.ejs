@@ -4,19 +4,18 @@
     <h3>Meeting details</h3>
     <% if (locals.meetingTitle) { %>
     <ul>
-        <li><%= meetingTitle %></li>;
-        <li><%= meetingDate %></li>;
-        <li><%= startTime %></li>;
-        <li><%= endTime %></li>;
-        <li><%= meetingVenue %></li>;
-        <li><%= daysAgenda %></li>;
-        <li><%= priorAgenda %></li>;
-        <li><%= daysClear %></li>;
-        <li><%= priorClear %></li>;
-        <li><%= daysSubmitMaterials %></li>;
-        <li><%= priorSubmitMaterials %></li>;
-        <li><%= daysCirculate %></li>;
-        <li><%= priorCirculate %></li>;
+        <li>Meeting Title: <%= meetingTitle %></li>
+        <li>Date: <%= meetingDate %></li>
+        <li>Time: <%= startTime %> to <%= endTime %></li>
+        <li>Venue: <%= meetingVenue %></li>
+        <li><%= daysAgenda %></li>
+        <li><%= priorAgenda %></li>
+        <li><%= daysClear %></li>
+        <li><%= priorClear %></li>
+        <li><%= daysSubmitMaterials %></li>
+        <li><%= priorSubmitMaterials %></li>
+        <li><%= daysCirculate %></li>
+        <li><%= priorCirculate %></li>
 
     <% } %>
     </ul>
