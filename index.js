@@ -49,7 +49,7 @@ app.post("/submitdetails", (req, res) => {
     daysCirculate: req.body["daysCirculate"],
     priorCirculate: req.body["priorCirculate"],
   };
-  res.render("calendar.ejs", meetingdata);
+  res.render("calendar.ejs", {meetingdata: meetingdata});
   console.log(meetingdata)
 });
 
