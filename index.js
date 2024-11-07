@@ -35,19 +35,19 @@ app.get("/completed", (req, res) => {
 
 app.post("/submitdetails", (req, res) => {
     const meetingdata = {
-    title: "meetingTitle",
-    meetingDate: "meetingDate",
-    startTime: "startTime",
-    endTime: "endTime", 
-    venue: "meetingVenue", 
-    daysAgenda: "daysAgenda",
-    priorAgenda: "priorAgenda",
-    daysClear: "daysClear",
-    priorClear: "priorClear",
-    daysSubmitMaterials: "daysSubmitMaterials",
-    priorSubmitMaterials: "priorSubmitMaterials",
-    daysCirculate: "daysCirculate",
-    priorCirculate: "priorCirculate"
+    title: req.body["meetingTitle"],
+    meetingDate: req.body["meetingDate"],
+    startTime: req.body["startTime"],
+    endTime: req.body["endTime"], 
+    venue: req.body["meetingVenue"], 
+    daysAgenda: req.body["daysAgenda"],
+    priorAgenda: req.body["priorAgenda"],
+    daysClear: req.body["daysClear"],
+    priorClear: req.body["priorClear"],
+    daysSubmitMaterials: req.body["daysSubmitMaterials"],
+    priorSubmitMaterials: req.body["priorSubmitMaterials"],
+    daysCirculate: req.body["daysCirculate"],
+    priorCirculate: req.body["priorCirculate"],
   };
   res.render("calendar.ejs", meetingdata);
   console.log(meetingdata)
