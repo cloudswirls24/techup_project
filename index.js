@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import "add-to-calendar-button";
+import { on } from "events";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -60,6 +61,11 @@ app.post("/calendar", (req, res) => {
 //   res.render("email.ejs");
 // //   console.log(meetingTitle, meetingDate, startTime, endTime, meetingVenue, daysAgenda, priorAgenda, daysClear, priorClear, daysSubmitMaterials, priorSubmitMaterials, daysCirculate, priorCirculate)
 // });
+
+//toggle timeline settings
+$("#flexCheckChecked").click(function () {
+  $("#timeline input").toggleAttribute("disabled");
+});
 
 // Tells the app which port to run on
 app.listen(port, () => {
