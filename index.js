@@ -36,7 +36,7 @@ app.get("/completed", (req, res) => {
 app.post("/submitdetails", (req, res) => {
     const meetingdata = {
     title: "meetingTitle"
-    date: "meetingDate",
+    meetingDate: "meetingDate",
     startTime: "startTime",
     endTime: "endTime", 
     venue: "meetingVenue", 
