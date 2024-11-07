@@ -33,7 +33,23 @@
         <tr>
           <th scope="row">1</th>
           <td>Meeting invite</td>
-          <td></td>
+          <td>
+                <add-to-calendar-button
+                name="<%= meetingTitle %>"
+                description="A nice description does not hurt"
+                startDate="<%= meetingDate %>"
+                endDate="<%= meetingDate %>"
+                startTime="<%= startTime %>"
+                endTime="<%= endTime %>"
+                location="<%= meetingVenue %>"
+                options="['iCal','Microsoft365','Outlook.com',]"
+                timeZone="Singapore"
+                trigger="click"
+                inline
+                listStyle="modal"
+                iCalFileName="Reminder-Event"
+                />
+          </td>
         </tr>
         <tr>
           <th scope="row">2</th>
