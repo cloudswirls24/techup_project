@@ -63,9 +63,11 @@ app.post("/calendar", (req, res) => {
 // });
 
 //toggle timeline settings
-$("#flexCheckChecked").click(function () {
-  $("#timeline input").toggleAttribute("disabled");
+
+jQuery("#flexCheckChecked").click(function () {
+    jQuery("#timeline input").toggleAttribute("disabled");
 });
+
 
 // Tells the app which port to run on
 app.listen(port, () => {
