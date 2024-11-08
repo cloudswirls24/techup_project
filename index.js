@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
 app.get("/meetingdetails", (req, res) => {
   res.render("meetingdetails.ejs");
-});
+ });
 
 app.get("/calendar", (req, res) => {
   res.render("calendar.ejs");
@@ -63,16 +63,7 @@ app.post("/calendar", (req, res) => {
 // //   console.log(meetingTitle, meetingDate, startTime, endTime, meetingVenue, daysAgenda, priorAgenda, daysClear, priorClear, daysSubmitMaterials, priorSubmitMaterials, daysCirculate, priorCirculate)
 // });
 
-//toggle timeline settings
 
-const button = document.querySelector("#flexCheckChecked");
-var input = document.querySelectorAll("#timeline input");
-
-button.addEventListener("click", () => {
-  for (var i=0; i < input.length; i++) {
-      input[i].toggleAttribute("disabled");
-  }
-});
 
 // jQuery("#flexCheckChecked").click(function () {
 //     jQuery("#timeline input").toggleAttribute("disabled");

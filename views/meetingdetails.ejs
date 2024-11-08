@@ -101,4 +101,19 @@
 </form>
 </div>
 
+<script>
+  // Get the checkbox and all form fields
+  const toggleCheckbox = document.querySelector('#flexCheckChecked');
+  const formFields = document.querySelectorAll('#timeline input');
+
+  // Add event listener to checkbox
+  toggleCheckbox.addEventListener('click', function() {
+      // Loop through all form fields and toggle their disabled state
+      for (var i=0; i < input.length; i++) {
+      formFields[i].toggleAttribute("disabled");
+      };
+  });
+
+</script>
+
 <%- include("partials/footer.ejs") %>
