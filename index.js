@@ -4,6 +4,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import "add-to-calendar-button";
 import { on } from "events";
+import { cachedDataVersionTag } from "v8";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -64,9 +65,20 @@ app.post("/calendar", (req, res) => {
 
 //toggle timeline settings
 
-jQuery("#flexCheckChecked").click(function () {
-    jQuery("#timeline input").toggleAttribute("disabled");
+const button = document.querySelector("#flexCheckChecked");
+var input = document.querySelectorAll("#timeline input");
+
+button.addEventListener("click", () => {
+  for (var i=0; i < input.length; i++) {
+      input[i].toggleAttribute("disabled");
+  }
 });
+
+// jQuery("#flexCheckChecked").click(function () {
+//     jQuery("#timeline input").toggleAttribute("disabled");
+// });
+
+
 
 
 // Tells the app which port to run on
