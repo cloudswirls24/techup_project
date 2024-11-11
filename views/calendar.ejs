@@ -2,21 +2,12 @@
 
 <div class="container">
     <h3>Meeting details</h3>
-    <% if (locals.meetingTitle) { %>
+    <% if (locals.meetingData) { %>
     <ul>
-        <li>Meeting Title: <%= meetingTitle %></li>
-        <li>Date: <%= meetingDate %></li>
-        <li>Time: <%= startTime %> to <%= endTime %></li>
-        <li>Venue: <%= meetingVenue %></li>
-        <!-- <li><%= daysAgenda %></li>
-        <li><%= priorAgenda %></li>
-        <li><%= daysClear %></li>
-        <li><%= priorClear %></li>
-        <li><%= daysSubmitMaterials %></li>
-        <li><%= priorSubmitMaterials %></li>
-        <li><%= daysCirculate %></li>
-        <li><%= priorCirculate %></li> -->
-
+        <li>Meeting Title: <%= meetingData.meetingTitle %></li>
+        <li>Date: <%= meetingData.meetingDate %></li>
+        <li>Time: <%= meetingData.startTime %> to <%= meetingData.endTime %></li>
+        <li>Venue: <%= meetingData.meetingVenue %></li>
     <% } %>
     </ul>
 
@@ -35,20 +26,20 @@
           <td>Meeting invite</td>
           <td>
                 <add-to-calendar-button
-                name="<%= meetingTitle %>"
+                name='<%= meetingData.meetingTitle %>' 
                 description="A nice description does not hurt"
-                startDate="<%= meetingDate %>"
-                endDate="<%= meetingDate %>"
-                startTime="<%= startTime %>"
-                endTime="<%= endTime %>"
-                location="<%= meetingVenue %>"
+                startDate='<%= meetingData.meetingDate %>'
+                endDate='<%= meetingData.meetingDate %>'
+                startTime='<%= meetingData.startTime %>'
+                endTime='<%= meetingData.endTime %>'
+                location='<%= meetingData.meetingVenue %>'
                 options="['iCal','Microsoft365','Outlook.com',]"
                 timeZone="Singapore"
                 trigger="click"
                 inline
                 listStyle="modal"
                 iCalFileName="Reminder-Event"
-                />
+                > </add-to-calendar-button>
           </td>
         </tr>
         <tr>

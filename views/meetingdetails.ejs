@@ -3,7 +3,7 @@
 
 <div class="container">
     <h3>1) Meeting details</h3>
-    <form action="/calendar" method="post">
+    <form action="/submitdetails" method="post">
     <div class="mb-3">
         <label for="meetingTitle" class="form-label">Meeting title</label>
         <input type="text" class="form-control" id="meetingTitle" name="meetingTitle" placeholder="Meeting title">
@@ -97,23 +97,59 @@
 
     </div>
     <!-- <a class="" href="/calendar" role="button" id="submitDetails">Next</a> -->
-    <input type="submit" class="btn btn-primary form-control" role="button" value="Next">
+    <input type="submit" class="btn btn-primary form-control" role="button" value="Show timeline">
 </form>
 </div>
 
 <script>
   // Get the checkbox and all form fields
-  const toggleCheckbox = document.querySelector('#flexCheckChecked');
-  const formFields = document.querySelectorAll('#timeline input');
+  const toggleCheckbox = document.querySelector("#flexCheckChecked");
+  const formFields = document.querySelectorAll("#timeline input");
 
   // Add event listener to checkbox
-  toggleCheckbox.addEventListener('click', function() {
+  toggleCheckbox.addEventListener("click", function() {
       // Loop through all form fields and toggle their disabled state
       for (var i=0; i < input.length; i++) {
       formFields[i].toggleAttribute("disabled");
       };
   });
-
 </script>
+
+<!-- Compute dates for meeting milestones -->
+
+<% if (timeline) { %>
+  <div class="container my-5">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <h4 style="margin-left: 1.2rem;">Meeting timeline</h4>
+        <ul class="timeline-3">
+          <li>
+            <a href="#!">Call for agenda</a>
+            <a href="#!" class="float-end"><%= timeline.callAgenda.start %> to <%= timeline.callAgenda.end %></a>
+            <p class="mt-2">Send out call for agenda items to all meeting participants.</p>
+          </li>
+          <li>
+            <a href="#!">Clear agenda with meeting chair</a>
+            <a href="#!" class="float-end"><%= timeline.clearAgenda.start %> to <%= timeline.clearAgenda.end %></a>
+            <p class="mt-2">Submit draft agenda to meeting chair for review and clearance.</p>
+          </li>
+          <li>
+            <a href="#!">Update item owners of cleared agenda</a>
+            <a href="#!" class="float-end"><%= timeline.informItemOwner.start %> to <%= timeline.informItemOwner.end %></a>
+            <p class="mt-2">Share instructions on submission of materials and administrative requirements.</p>
+          </li>
+          <li>
+            <a href="#!">Circulate materials for meeting</a>
+            <a href="#!" class="float-end"><%= timeline.circulateMaterials.start %> to <%= timeline.circulateMaterials.end %></a>
+            <p class="mt-2">Compile and circulate all meeting materials to participants.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <form action="/calendar" method="post">
+      <input type="submit" class="btn btn-primary form-control" role="button" value="Next">
+    </form>
+  </div>
+  <% } %>
 
 <%- include("partials/footer.ejs") %>
