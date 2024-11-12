@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import "add-to-calendar-button";
+import addToCalendarButton from "add-to-calendar-button";
 import { on } from "events";
 import { cachedDataVersionTag } from "v8";
 import { clear } from "console";
