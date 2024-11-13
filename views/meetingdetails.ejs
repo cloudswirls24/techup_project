@@ -1,155 +1,190 @@
 <%- include("partials/header.ejs") %>
 
-
 <div class="container">
     <h3>1) Meeting details</h3>
-    <form action="/submitdetails" method="post">
-    <div class="mb-3">
-        <label for="meetingTitle" class="form-label">Meeting title</label>
-        <input type="text" class="form-control" id="meetingTitle" name="meetingTitle" placeholder="Meeting title">
-    </div>
-    <div class="mb-3">
-        <label for="meetingDate" class="form-label">Date</label>
-        <input type="date" class="form-control" id="meetingDate" name="meetingDate" placeholder="Meeting date">
-    </div>
-    <div class="mb-3">
-        <label for="meetingStartTime" class="form-label">Time</label>
-    <div class="row">
-        <div class="col">
-          <input type="time" class="form-control" name="startTime" placeholder="Meeting start time" aria-label="Meeting start time">
+    <!-- Notice this form now wraps both meeting details and timeline settings -->
+    <form action="/submitdetails" method="post" class="row g-3">
+        <!-- Meeting Details Section -->
+        <div class="col-md-12">
+            <label for="meetingTitle" class="form-label">Meeting title</label>
+            <input type="text" class="form-control" id="meetingTitle" name="meetingTitle" placeholder="Meeting title" required>
         </div>
-        to
-        <div class="col">
-          <input type="time" class="form-control" name="endTime" placeholder="Meeting end time" aria-label="Meeting end time">
+        <div class="col-md-6">
+            <label for="meetingDate" class="form-label">Date</label>
+            <input type="date" class="form-control" id="meetingDate" name="meetingDate" placeholder="Meeting date" required>
         </div>
-      </div></div>
-    <div class="mb-3">
-        <label for="meetingVenue" class="form-label">Venue</label>
-        <input type="text" class="form-control" id="meetingVenue" name="meetingVenue" placeholder="Meeting venue">
-    </div>
-</div>
+        <div class="col-5 col-md-2">
+            <label for="meetingStartTime" class="form-label">Time</label>
+            <input type="time" class="form-control" name="startTime" placeholder="Meeting start time" required>
+        </div>
+        <div class="col-1 align-self-end text-center">
+            to
+        </div>
+        <div class="col-5 col-md-2 align-self-end">
+            <input type="time" class="form-control" name="endTime" placeholder="Meeting end time" required>
+        </div>
+        <div class="col-md-12">
+            <label for="meetingVenue" class="form-label">Venue</label>
+            <input type="text" class="form-control" id="meetingVenue" name="meetingVenue" placeholder="Meeting venue" required>
+        </div>
 
-<div class="container mt-5" id="timeline">
-    <h3>2) Timeline settings</h3>
-    <div class="form-check my-3">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" name="defaultSetting" checked>
-        <label class="form-check-label" for="flexCheckChecked">
-          Use default settings?
-        </label>
-      </div>
-    <div class="row mb-3">
-        <div class="col">
-               
-        </div>
-        <div class="col">
-            Days to complete task  
-        </div>
-        <div class="col">
-             Number of weeks before meeting to start task    
-        </div>
-    <div class="row my-3">
-        <div class="col">
-        Call for agenda    
-        </div>
-        <div class="col">
-          <input type="number" class="form-control" placeholder="Days to complete task" name="daysAgenda" aria-label="Days_call agenda" disabled>
-        </div>
-        <div class="col">
-          <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorAgenda" aria-label="Advance_call agenda">
-        </div>
-    </div>
+        <!-- Timeline Settings Section -->
+        <div class="container mt-5" id="timeline">
+            <h3>2) Timeline settings</h3>
+            <div class="form-check my-3">
+                <input class="form-check-input" type="checkbox" id="flexCheckChecked" name="defaultSetting" checked>
+                <label class="form-check-label" for="flexCheckChecked">
+                    Use default settings?
+                </label>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                </div>
+                <div class="col">
+                    Days to complete task  
+                </div>
+                <div class="col">
+                    Number of weeks before meeting to start task    
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col">
+                    Call for agenda    
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" placeholder="Days to complete task" name="daysAgenda" 
+                        value="<%= locals.meetingData ? meetingData.daysAgenda : defaultSettings.daysAgenda %>" disabled>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorAgenda" 
+                        value="<%= locals.meetingData ? meetingData.priorAgenda : defaultSettings.priorAgenda %>" disabled>
+                </div>
+            </div>
 
-    <div class="row mb-3">
-        <div class="col">
-        Seek clearance for agenda  
-        </div>
-        <div class="col">
-          <input type="number" class="form-control" placeholder="Days to complete task" name="daysClear" aria-label="First name">
-        </div>
-        <div class="col">
-          <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorClear" aria-label="Last name">
-        </div>
-    </div>
+            <div class="row mb-3">
+                <div class="col">
+                    Seek clearance for agenda  
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" placeholder="Days to complete task" name="daysClear" 
+                        value="<%= locals.meetingData ? meetingData.daysClear : defaultSettings.daysClear %>" disabled>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorClear" 
+                        value="<%= locals.meetingData ? meetingData.priorClear : defaultSettings.priorClear %>" disabled>
+                </div>
+            </div>
 
-    <div class="row mb-3">
-        <div class="col">
-        Item owners to submit materials   
-        </div>
-        <div class="col">
-          <input type="number" class="form-control" placeholder="Days to complete task" name="daysSubmitMaterials" aria-label="First name">
-        </div>
-        <div class="col">
-          <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorSubmitMaterials" aria-label="Last name">
-        </div>
-    </div>
+            <div class="row mb-3">
+                <div class="col">
+                    Item owners to submit materials   
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" placeholder="Days to complete task" name="daysSubmitMaterials" 
+                        value="<%= locals.meetingData ? meetingData.daysSubmitMaterials : defaultSettings.daysSubmitMaterials %>" disabled>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorSubmitMaterials" 
+                        value="<%= locals.meetingData ? meetingData.priorSubmitMaterials : defaultSettings.priorSubmitMaterials %>" disabled>
+                </div>
+            </div>
 
-    <div class="row mb-3">
-        <div class="col">
-        Circulation of materials  
+            <div class="row mb-3">
+                <div class="col">
+                    Circulation of materials  
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" placeholder="Days to complete task" name="daysCirculate" 
+                        value="<%= locals.meetingData ? meetingData.daysCirculate : defaultSettings.daysCirculate %>" disabled>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorCirculate" 
+                        value="<%= locals.meetingData ? meetingData.priorCirculate : defaultSettings.priorCirculate %>" disabled>
+                </div>
+            </div>
         </div>
-        <div class="col">
-          <input type="number" class="form-control" placeholder="Days to complete task" name="daysCirculate" aria-label="First name">
-        </div>
-        <div class="col">
-          <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorCirculate" aria-label="Last name">
-        </div>
-    </div>
 
-    </div>
-    <!-- <a class="" href="/calendar" role="button" id="submitDetails">Next</a> -->
-    <input type="submit" class="btn btn-primary form-control" role="button" value="Show timeline">
-</form>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary form-control">Update Timeline</button>
+        </div>
+    </form>
+
+    <% if (timeline) { %>
+        <div class="container my-5">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <h4 style="margin-left: 1.2rem;">Meeting timeline</h4>
+                    <ul class="timeline-3">
+                        <li>
+                            <a href="#!">Call for agenda</a>
+                            <a href="#!" class="float-end"><%= timeline.callAgenda.start %> to <%= timeline.callAgenda.end %></a>
+                            <p class="mt-2">Send out call for agenda items to all meeting participants.</p>
+                        </li>
+                        <li>
+                            <a href="#!">Clear agenda with meeting chair</a>
+                            <a href="#!" class="float-end"><%= timeline.clearAgenda.start %> to <%= timeline.clearAgenda.end %></a>
+                            <p class="mt-2">Submit draft agenda to meeting chair for review and clearance.</p>
+                        </li>
+                        <li>
+                            <a href="#!">Update item owners of cleared agenda</a>
+                            <a href="#!" class="float-end"><%= timeline.informItemOwner.start %> to <%= timeline.informItemOwner.end %></a>
+                            <p class="mt-2">Share instructions on submission of materials and administrative requirements.</p>
+                        </li>
+                        <li>
+                            <a href="#!">Circulate materials for meeting</a>
+                            <a href="#!" class="float-end"><%= timeline.circulateMaterials.start %> to <%= timeline.circulateMaterials.end %></a>
+                            <p class="mt-2">Compile and circulate all meeting materials to participants.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <form action="/calendar" method="post" class="mt-3">
+                <button type="submit" class="btn btn-primary form-control">Next</button>
+            </form>
+        </div>
+    <% } %>
 </div>
 
 <script>
-  // Get the checkbox and all form fields
-  const toggleCheckbox = document.querySelector("#flexCheckChecked");
-  const formFields = document.querySelectorAll("#timeline input");
+    // Get the checkbox and all form fields
+    const toggleCheckbox = document.querySelector("#flexCheckChecked");
+    const formFields = document.querySelectorAll("#timeline input[type='number']");
+    const defaultValues = {
+        daysAgenda: <%= defaultSettings.daysAgenda %>,
+        priorAgenda: <%= defaultSettings.priorAgenda %>,
+        daysClear: <%= defaultSettings.daysClear %>,
+        priorClear: <%= defaultSettings.priorClear %>,
+        daysSubmitMaterials: <%= defaultSettings.daysSubmitMaterials %>,
+        priorSubmitMaterials: <%= defaultSettings.priorSubmitMaterials %>,
+        daysCirculate: <%= defaultSettings.daysCirculate %>,
+        priorCirculate: <%= defaultSettings.priorCirculate %>
+    };
 
-  // Add event listener to checkbox
-  toggleCheckbox.addEventListener("click", function() {
-      // Loop through all form fields and toggle their disabled state
-      for (var i=0; i < input.length; i++) {
-      formFields[i].toggleAttribute("disabled");
-      };
-  });
+    // Function to set default values
+    function setDefaultValues() {
+        const inputs = document.querySelectorAll("#timeline input[type='number']");
+        inputs.forEach(input => {
+            const fieldName = input.name;
+            if (defaultValues[fieldName]) {
+                input.value = defaultValues[fieldName];
+            }
+        });
+    }
+
+    // Add event listener to checkbox
+    toggleCheckbox.addEventListener("change", function() {
+        formFields.forEach(field => {
+            field.disabled = toggleCheckbox.checked;
+        });
+        if(toggleCheckbox.checked) {
+            setDefaultValues();
+        }
+    });
+
+    // Set initial state
+    formFields.forEach(field => {
+        field.disabled = toggleCheckbox.checked;
+    });
 </script>
-
-<!-- Compute dates for meeting milestones -->
-
-<% if (timeline) { %>
-  <div class="container my-5">
-    <div class="row">
-      <div class="col-md-6 offset-md-3">
-        <h4 style="margin-left: 1.2rem;">Meeting timeline</h4>
-        <ul class="timeline-3">
-          <li>
-            <a href="#!">Call for agenda</a>
-            <a href="#!" class="float-end"><%= timeline.callAgenda.start %> to <%= timeline.callAgenda.end %></a>
-            <p class="mt-2">Send out call for agenda items to all meeting participants.</p>
-          </li>
-          <li>
-            <a href="#!">Clear agenda with meeting chair</a>
-            <a href="#!" class="float-end"><%= timeline.clearAgenda.start %> to <%= timeline.clearAgenda.end %></a>
-            <p class="mt-2">Submit draft agenda to meeting chair for review and clearance.</p>
-          </li>
-          <li>
-            <a href="#!">Update item owners of cleared agenda</a>
-            <a href="#!" class="float-end"><%= timeline.informItemOwner.start %> to <%= timeline.informItemOwner.end %></a>
-            <p class="mt-2">Share instructions on submission of materials and administrative requirements.</p>
-          </li>
-          <li>
-            <a href="#!">Circulate materials for meeting</a>
-            <a href="#!" class="float-end"><%= timeline.circulateMaterials.start %> to <%= timeline.circulateMaterials.end %></a>
-            <p class="mt-2">Compile and circulate all meeting materials to participants.</p>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <form action="/calendar" method="post">
-      <input type="submit" class="btn btn-primary form-control" role="button" value="Next">
-    </form>
-  </div>
-  <% } %>
 
 <%- include("partials/footer.ejs") %>

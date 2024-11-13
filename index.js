@@ -2,7 +2,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-//import addToCalendarButton from "add-to-calendar-button";
 import { on } from "events";
 import { cachedDataVersionTag } from "v8";
 import { clear } from "console";
@@ -16,8 +15,41 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Store meeting data globally (consider using a database in production)
 let meetingData = null;
+let timeline = null;
+
+// Default timeline settings
+const defaultSettings = {
+    daysAgenda: 7,
+    priorAgenda: 5.5,
+    daysClear: 5,
+    priorClear: 4,
+    daysSubmitMaterials: 3,
+    priorSubmitMaterials: 1.5,
+    daysCirculate: 2,
+    priorCirculate: 1
+};
+
+function getTimelineSettings(formData, useDefault) {
+    if (useDefault) {
+        return { ...defaultSettings };
+    }
+    return {
+        daysAgenda: parseInt(formData.daysAgenda) || defaultSettings.daysAgenda,
+        priorAgenda: parseInt(formData.priorAgenda) || defaultSettings.priorAgenda,
+        daysClear: parseInt(formData.daysClear) || defaultSettings.daysClear,
+        priorClear: parseInt(formData.priorClear) || defaultSettings.priorClear,
+        daysSubmitMaterials: parseInt(formData.daysSubmitMaterials) || defaultSettings.daysSubmitMaterials,
+        priorSubmitMaterials: parseInt(formData.priorSubmitMaterials) || defaultSettings.priorSubmitMaterials,
+        daysCirculate: parseInt(formData.daysCirculate) || defaultSettings.daysCirculate,
+        priorCirculate: parseInt(formData.priorCirculate) || defaultSettings.priorCirculate
+    };
+}
 
 function calcMeetingMilestones(meetingDetails) {
+    if (!meetingDetails || !meetingDetails.meetingDate) {
+        return null;
+    }
+
     const meetingDate = new Date(meetingDetails.meetingDate);
     
     // Convert weeks to milliseconds
@@ -57,77 +89,76 @@ function calcMeetingMilestones(meetingDetails) {
     };
 }
 
-//home page
 app.get("/", (req, res) => {
-  res.render("index.ejs");
+    res.render("index.ejs");
 });
 
-//meeting details page
 app.get("/meetingdetails", (req, res) => {
-  res.render("meetingdetails.ejs", { timeline: null });
+    res.render("meetingdetails.ejs", { 
+        meetingData: meetingData || { ...defaultSettings },
+        timeline: timeline,
+        defaultSettings: defaultSettings
+    });
 });
 
-
-//Code for meeting details
 app.post("/submitdetails", (req, res) => {
-    // Store the meeting details
-    meetingData = {
+  // Check if using default settings
+  const useDefaultSettings = req.body.defaultSetting === 'on';
+  const timelineSettings = getTimelineSettings(req.body, useDefaultSettings);
+
+  // Create meeting data object
+  meetingData = {
       meetingTitle: req.body.meetingTitle,
       meetingDate: req.body.meetingDate,
       startTime: req.body.startTime,
       endTime: req.body.endTime,
       meetingVenue: req.body.meetingVenue,
-      daysAgenda: parseInt(req.body.daysAgenda),
-      priorAgenda: parseInt(req.body.priorAgenda),
-      daysClear: parseInt(req.body.daysClear),
-      priorClear: parseInt(req.body.priorClear),
-      daysSubmitMaterials: parseInt(req.body.daysSubmitMaterials),
-      priorSubmitMaterials: parseInt(req.body.priorSubmitMaterials),
-      daysCirculate: parseInt(req.body.daysCirculate),
-      priorCirculate: parseInt(req.body.priorCirculate)
+      ...timelineSettings
   };
 
   // Calculate timeline
-  const timeline = calcMeetingMilestones(meetingData);
-  
-  // Render the page with the timeline
-  res.render("meetingdetails.ejs", { timeline: timeline });
+  timeline = calcMeetingMilestones(meetingData);
+
+  console.log('Meeting Data:', meetingData); // Debug log
+  console.log('Timeline:', timeline); // Debug log
+
+  // Render the page with both meetingData and timeline
+  res.render("meetingdetails.ejs", { 
+      meetingData: meetingData,
+      timeline: timeline,
+      defaultSettings: defaultSettings
+  });
 });
 
-//calendar page
 app.post("/calendar", (req, res) => {
-  res.render("calendar.ejs", { meetingData });
+    if (meetingData) {
+        timeline = calcMeetingMilestones(meetingData);
+    }
+    
+    res.render("calendar.ejs", { 
+        meetingData: meetingData,
+        timeline: timeline 
+    });
 });
 
-// app.get("/calendar", (req, res) => {
-//   res.render("calendar.ejs");
-// });
+app.get("/calendar", (req, res) => {
+    if (meetingData) {
+        timeline = calcMeetingMilestones(meetingData);
+    }
+    
+    res.render("calendar.ejs", { 
+        meetingData: meetingData,
+        timeline: timeline 
+    });
+});
 
-//email templates page
 app.get("/email", (req, res) => {
-  res.render("email.ejs", { meetingData });
+    res.render("email.ejs", { meetingData });
 });
 
-//completion page
 app.get("/completed", (req, res) => {
-  res.render("completed.ejs");
+    res.render("completed.ejs");
 });
-
-
-
-
-// app.post("/email", (req, res) => {
-//   res.render("email.ejs");
-// //   console.log(meetingTitle, meetingDate, startTime, endTime, meetingVenue, daysAgenda, priorAgenda, daysClear, priorClear, daysSubmitMaterials, priorSubmitMaterials, daysCirculate, priorCirculate)
-// });
-
-
-
-// jQuery("#flexCheckChecked").click(function () {
-//     jQuery("#timeline input").toggleAttribute("disabled");
-// });
-
-
 
 // Tells the app which port to run on
 app.listen(port, () => {

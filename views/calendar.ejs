@@ -10,53 +10,100 @@
         <li>Venue: <%= meetingData.meetingVenue %></li>
     <% } %>
     </ul>
-
+    
     <h3>Calendar invites</h3>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Item</th>
-          <th scope="col">Download</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>Meeting invite</td>
-          <td>
-                <add-to-calendar-button
-                name='<%= meetingData.meetingTitle %>' 
-                description="A nice description does not hurt"
-                startDate='<%= meetingData.meetingDate %>'
-                endDate='<%= meetingData.meetingDate %>'
-                startTime='<%= meetingData.startTime %>'
-                endTime='<%= meetingData.endTime %>'
-                location='<%= meetingData.meetingVenue %>'
-                options="['iCal','Microsoft365','Outlook.com',]"
-                timeZone="Singapore"
-                trigger="click"
-                inline
-                listStyle="modal"
-                iCalFileName="Reminder-Event"
-                > </add-to-calendar-button>
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Reminders for meeting milestones</td>
-          <td></td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>text</td>
-        </tr>
-      </tbody>
-    </table>
-    <!-- <form action="/email" method="post"> -->
+            <!-- Debug output -->
+            <% if (locals.timeline) { %>
+                <div style="display: none">
+                    Timeline data: <%= JSON.stringify(timeline) %>
+                </div>
+            <% } %>
+    
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Item</th>
+                        <th scope="col">Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Main meeting button -->
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Meeting invite</td>
+                        <td>
+                            <add-to-calendar-button
+                                name="<%= meetingData.meetingTitle %>"
+                                description="Main meeting"
+                                startDate="<%= meetingData.meetingDate %>"
+                                endDate="<%= meetingData.meetingDate %>"
+                                startTime="<%= meetingData.startTime %>"
+                                endTime="<%= meetingData.endTime %>"
+                                location="<%= meetingData.meetingVenue %>"
+                                options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
+                                timeZone="Asia/Singapore"
+                                trigger="click"
+                                inline
+                                listStyle="modal"
+                                iCalFileName="Meeting-Event">
+                            </add-to-calendar-button>
+                        </td>
+                    </tr>
+    
+                    <!-- Call for Agenda button -->
+                    <% if (locals.timeline && timeline.callAgenda) { %>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Call for Agenda Reminder</td>
+                            <td>
+                                <add-to-calendar-button
+                                    name="Call for Agenda - <%= meetingData.meetingTitle %>"
+                                    description="Deadline to submit agenda items"
+                                    startDate="<%= new Date(timeline.callAgenda.start).toISOString().split('T')[0] %>"
+                                    endDate="<%= new Date(timeline.callAgenda.end).toISOString().split('T')[0] %>"
+                                    startTime="09:00"
+                                    endTime="17:00"
+                                    location="<%= meetingData.meetingVenue %>"
+                                    options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
+                                    timeZone="Asia/Singapore"
+                                    trigger="click"
+                                    inline
+                                    listStyle="modal"
+                                    iCalFileName="Agenda-Deadline">
+                                </add-to-calendar-button>
+                            </td>
+                        </tr>
+                    <% } %>
+    
+                    <!-- Circulate Materials button -->
+                    <% if (locals.timeline && timeline.circulateMaterials) { %>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Circulate Materials Reminder</td>
+                            <td>
+                                <add-to-calendar-button
+                                    name="Circulate Materials - <%= meetingData.meetingTitle %>"
+                                    description="Deadline to circulate meeting materials"
+                                    startDate="<%= new Date(timeline.circulateMaterials.start).toISOString().split('T')[0] %>"
+                                    endDate="<%= new Date(timeline.circulateMaterials.end).toISOString().split('T')[0] %>"
+                                    startTime="09:00"
+                                    endTime="17:00"
+                                    location="<%= meetingData.meetingVenue %>"
+                                    options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
+                                    trigger="click"
+                                    inline
+                                    listStyle="modal"
+                                    iCalFileName="Materials-Deadline">
+                                </add-to-calendar-button>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+
     <a class="btn btn-primary" href="/email" role="button">Next</a>
-    <!-- <input type="submit" class="btn btn-primary form-control" role="button" value="Next">
-    </form> -->
+
   </div>
 
 <%- include("partials/footer.ejs") %>
