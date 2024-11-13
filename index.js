@@ -2,13 +2,14 @@ import express from "express";
 import bodyParser from "body-parser";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import { createMimeMessage } from 'mimetext';
 import { on } from "events";
 import { cachedDataVersionTag } from "v8";
 import { clear } from "console";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
-const port = 10000;
+const port = 5000;
 
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -89,6 +90,112 @@ function calcMeetingMilestones(meetingDetails) {
     };
 }
 
+// script for emailTemplates
+
+const EMAIL_TEMPLATES = {
+  CALL_FOR_AGENDA: {
+    subject: (meetingTitle) => `[Call for agenda] ${meetingData.meetingTitle}`,
+    body: (data, timeline) => `
+Dear all,
+
+<b>[Call for agenda] ${meetingData.meetingTitle}</b>
+
+This is a call for agenda for the ${meetingData.meetingTitle} scheduled for ${meetingData.meetingDate}, ${meetingData.startTime} - ${meetingData.endTime} at ${meetingData.meetingVenue}.
+
+Please indicate your items in the following format by <u>${timeline.callAgenda.end}</u>:
+<table class="table table-bordered border-black"><thead><tr><th scope="col">#</th><th scope="col">Item title</th><th scope="col">Item description</th><th scope="col">Purpose (for information /discussion /approval)</th><th scope="col">Duration (minutes)</th><th scope="col">Presenter</th></tr></thead>
+<tbody><tr><td>1</td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+Thank you.
+
+Best regards,
+    `.trim()
+  },
+
+  SEEK_CLEARANCE: {
+    subject: (meetingTitle, meetingDate) => `[For clearance] Agenda for ${meetingData.meetingTitle} on ${meetingData.meetingDate}`,
+    body: (data) => `
+Dear <mark>[Approving Authority]</mark>,
+
+<b>[For clearance] Agenda for ${meetingData.meetingTitle} on ${meetingData.meetingDate}</b>
+
+This seeks your clearance for the agenda for the ${meetingData.meetingTitle} scheduled for ${meetingData.meetingDate}, ${meetingData.startTime} - ${meetingData.endTime} at ${meetingData.meetingVenue}.
+
+<mark>[Insert agenda table here]</mark>
+
+For your clearance,  please. Thank you.
+
+Best regards,
+
+    `.trim()
+  },
+
+  INFORM_ITEM_OWNERS: {
+    subject: (meetingTitle, meetingDate) => `[Action required] Materials and admin arrangements for ${meetingData.meetingTitle} on ${meetingData.meetingDate}`,
+    body: (data, timeline) => `
+Dear all,
+
+Your item has been included in the agenda for the ${meetingData.meetingTitle} scheduled for ${meetingData.meetingDate}, ${meetingData.startTime} - ${meetingData.endTime} at ${meetingData.meetingVenue}.
+
+<mark>[Insert agenda table here]</mark>
+
+Please submit your materials by ${timeline.circulateMaterials.start} to allow sufficient time for circulation.
+
+<mark>[Insert any other admin instructions for security clearance, attendance, etc]</mark>
+
+Thank you.
+
+Best regards,
+    `.trim()
+  },
+
+  CIRCULATE_MATERIALS: {
+    subject: (meetingTitle, meetingDate) => `[For information] Materials for ${meetingData.meetingTitle} on ${meetingData.meetingDate}`,
+    body: (data) => `
+Dear all,
+
+<b>[For information] Materials for ${meetingData.meetingTitle} on ${meetingData.meetingDate}</b>
+
+Please find attached the materials for the ${meetingData.meetingTitle} scheduled for:
+
+<b>Date: ${meetingData.meetingDate}
+Time: ${meetingData.startTime} - ${meetingData.endTime}
+Venue: ${meetingData.meetingVenue}</b>
+
+<mark>[Insert agenda table here with attachments/file links]</mark>
+
+Thank you.
+
+Best regards,
+
+    `.trim()
+  }
+};
+
+// Function to generate MIME message
+
+function generateMimeMessage(template, meetingData, timeline) {
+  const msg = createMimeMessage();
+  
+  // Set basic email properties
+  msg.setSender('[sender@example.com]');
+  msg.setRecipient('[recipient@example.com]');
+  msg.setHeader("X-Unsent", "1");
+  
+  // Get template content
+  const templateData = EMAIL_TEMPLATES[template];
+  const subject = templateData.subject(meetingData.meetingTitle, meetingData.meetingDate);
+  const body = templateData.body(meetingData, timeline);
+  
+  // Set subject and body
+  msg.setSubject(subject);
+  msg.addMessage({
+    contentType: 'text/html',
+    data: body.replace(/\n/g, '<br>')
+  });
+  
+  return msg;
+}
+
 app.get("/", (req, res) => {
     res.render("index.ejs");
 });
@@ -137,7 +244,8 @@ app.post("/templates", (req, res) => {
     
     res.render("templates.ejs", { 
         meetingData: meetingData,
-        timeline: timeline 
+        timeline: timeline,
+        templates: EMAIL_TEMPLATES,
     });
 });
 
@@ -148,13 +256,32 @@ app.get("/templates", (req, res) => {
     
     res.render("templates.ejs", { 
         meetingData: meetingData,
-        timeline: timeline 
+        timeline: timeline,
+        templates: EMAIL_TEMPLATES,
     });
 });
 
-app.get("/email", (req, res) => {
-    res.render("email.ejs", { meetingData });
+// Route to generate and download MIME message
+app.get("/generate-email/:template", (req, res) => {
+    const template = req.params.template;
+    
+    if (!meetingData || !timeline || !EMAIL_TEMPLATES[template]) {
+        return res.status(400).send("Invalid request");
+    }
+    
+    const msg = generateMimeMessage(template, meetingData, timeline);
+    
+    // Set headers for file download
+    res.setHeader('Content-Type', 'message/rfc822');
+    res.setHeader('Content-Disposition', `attachment; filename="${template.toLowerCase()}.eml"`);
+    
+    // Send the MIME message
+    res.send(msg.asRaw());
 });
+
+// app.get("/email", (req, res) => {
+//     res.render("email.ejs", { meetingData });
+// });
 
 app.get("/completed", (req, res) => {
     res.render("completed.ejs");

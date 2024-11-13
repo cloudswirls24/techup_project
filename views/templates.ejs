@@ -34,88 +34,112 @@
         listStyle="modal"
         iCalFileName="Meeting-Event">
     </add-to-calendar-button>
-   
+   <p></p>
+   <p></p>
     <h3>Email templates</h3>
+    <% if (!locals.meetingData) { %>
+      <div class="alert alert-warning">
+          Please submit meeting details first.
+      </div>
+  <% } else { %>
     <div class="container">
-    <div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion" id="emailTemplates">
       <div class="accordion-item">
         <h2 class="accordion-header">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#callForAgenda" aria-expanded="true">
             Call for agenda
           </button>
         </h2>
-        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+        <div id="callForAgenda" class="accordion-collapse collapse show">
           <div class="accordion-body">
-            <% if (locals.meetingData) { %>
-              <strong><p>[Call for agenda] <%= meetingData.meetingTitle %> </p></strong>
-              
-              <p>This is a call for agenda for the <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %>, <%= meetingData.startTime %> - <%= meetingData.endTime %> at <%= meetingData.meetingVenue %>. Please indicate your item in the following format by <%= timeline.callAgenda.end %>:</p>
-              
-              <p>Thank you.</p>
-              
-              <% } %>
-            </div>
-        </div>
+              <div class="email-preview">
+                  <strong>Subject:</strong> [Call for agenda] <%= meetingData.meetingTitle %>
+                  <hr>
+                  <div class="email-body">
+                      <%- templates.CALL_FOR_AGENDA.body(meetingData, timeline).replace(/\n/g, '<br>') %>
+                  </div>
+              </div>
+              <div class="mt-3">
+                  <a href="/generate-email/CALL_FOR_AGENDA" class="btn btn-primary">
+                      Download Email
+                  </a>
+              </div>
+          </div>
+      </div>
       </div>
       <div class="accordion-item">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#clearAgenda" aria-expanded="false">
             Seek clearance for agenda
           </button>
         </h2>
-        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+        <div id="clearAgenda" class="accordion-collapse collapse">
           <div class="accordion-body">
-            <% if (locals.meetingData) { %>
-
-              <strong><p>[For clearance] Agenda for <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %> </p></strong>
-          
-          <p>This seeks your clearance for the agenda for the <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %>, <%= meetingData.startTime %> - <%= meetingData.endTime %> at <%= meetingData.meetingVenue %>, please. </p>
-          
-          <p>Thank you.</p>
-          
-          <% } %>
+            <div class="email-preview">
+              <strong>Subject:</strong> [For clearance] Agenda for <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %>
+              <hr>
+              <div class="email-body">
+                  <%- templates.SEEK_CLEARANCE.body(meetingData, timeline).replace(/\n/g, '<br>') %>
+              </div>
+          </div>
+          <div class="mt-3">
+              <a href="/generate-email/SEEK_CLEARANCE" class="btn btn-primary">
+                  Download Email
+              </a>
+          </div>
             </div>
         </div>
       </div>
       <div class="accordion-item">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#informItemOwner" aria-expanded="false">
             Inform item owners of meeting arrangements
           </button>
         </h2>
-        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+        <div id="informItemOwner" class="accordion-collapse collapse">
           <div class="accordion-body">
-            <!-- <%- include("partials/itemowners.ejs") %> -->
+            <div class="email-preview">
+              <strong>Subject:</strong> [Action required] Materials and admin arrangements for <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %>
+              <hr>
+              <div class="email-body">
+                  <%- templates.INFORM_ITEM_OWNERS.body(meetingData, timeline).replace(/\n/g, '<br>') %>
+              </div>
+          </div>
+          <div class="mt-3">
+              <a href="/generate-email/INFORM_ITEM_OWNERS" class="btn btn-primary">
+                  Download Email
+              </a>
+          </div>
           </div>
         </div>
       </div>
       <div class="accordion-item">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
-            Admin arrangements for attendance, security clearance, parking
-          </button>
-        </h2>
-        <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
-          <div class="accordion-body">
-            <!-- <%- include("partials/admin.ejs") %> -->
-          </div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#circulateMaterials" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
             Circulation of materials
           </button>
         </h2>
-        <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse">
+        <div id="circulateMaterials" class="accordion-collapse collapse">
           <div class="accordion-body">
-            <!-- <%- include("partials/circulate.ejs") %> -->
+            <div class="email-preview">
+              <strong>Subject:</strong> [For information] Materials for <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %>
+              <hr>
+              <div class="email-body">
+                  <%- templates.CIRCULATE_MATERIALS.body(meetingData, timeline).replace(/\n/g, '<br>') %>
+              </div>
+          </div>
+          <div class="mt-3">
+              <a href="/generate-email/CIRCULATE_MATERIALS" class="btn btn-primary">
+                  Download Email
+              </a>
+          </div>
           </div>
         </div>
       </div>
+      
     </div>
     <p></p>
     <a class="btn btn-primary" href="/completed" role="button">Next</a>
     </div>
-
+  <% } %>
 <%- include("partials/footer.ejs") %>
