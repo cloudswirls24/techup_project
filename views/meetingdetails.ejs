@@ -1,6 +1,17 @@
 <%- include("partials/header.ejs") %>
 
 <div class="container">
+    <% if (meetingData) { %>
+        <% if (error) { %>
+            <div class="alert alert-danger">Meeting date cannot be in the past.</div>
+        <% } else { %>
+        
+        <% if (isOnWeekendOrHoliday) { %>
+            <div class="alert alert-warning">The selected meeting date is on a weekend or public holiday. Sure boh?</div>
+        <% }%>
+     
+    <% }}%>
+
     <h3>1) Meeting details</h3>
     <form action="/submitdetails" method="post" class="row g-3">
         <!-- Meeting Details Section -->
@@ -110,11 +121,14 @@
          </div>
 
     </form>
-
+   
     <% if (timeline) { %>
         <div class="container my-5" id="timelineResults">
             <div class="row justify-content-center">
                 <div class="col-6 col-md-10 col-xl-9">
+                    <% if (hasPastMilestones) { %>
+                        <div class="alert alert-warning"> One or more of the calculated meeting milestones are in the past. The timeline may not be feasible!</div>
+                    <% } %>
                     <h4 style="margin-left: 1.2rem;">Meeting timeline</h4>
                     <ul class="timeline-3">
                         <li>

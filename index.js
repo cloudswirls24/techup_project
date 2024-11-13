@@ -129,7 +129,8 @@ function calcMeetingMilestones(meetingDetails) {
     }
 
     const meetingDate = new Date(meetingDetails.meetingDate);
-
+    const today = new Date();
+ 
   // Calculate start and end dates for each milestone
   const callAgendaStart = subtractWorkingWeeks(new Date(meetingDate), meetingDetails.priorAgenda);
   const callAgendaEnd = addWorkingDays(new Date(callAgendaStart), meetingDetails.daysAgenda);
@@ -143,22 +144,33 @@ function calcMeetingMilestones(meetingDetails) {
   const circulateMaterialsStart = subtractWorkingWeeks(new Date(meetingDate), meetingDetails.priorCirculate);
   const circulateMaterialsEnd = addWorkingDays(new Date(circulateMaterialsStart), meetingDetails.daysCirculate);
 
+  const callAgendaStartPast = callAgendaStart < today;
+  const callAgendaEndPast = callAgendaEnd < today;
+  const clearAgendaStartPast = clearAgendaStart < today;
+  const clearAgendaEndPast = clearAgendaEnd < today;
+  const informItemOwnerStartPast = informItemOwnerStart < today;
+  const circulateMaterialsStartPast = circulateMaterialsStart < today;
+  
   return {
     callAgenda: {
       start: formatDate(callAgendaStart),
-      end: formatDate(callAgendaEnd)
+      end: formatDate(callAgendaEnd),
+      isPast: callAgendaStartPast || callAgendaEndPast,
     },
     clearAgenda: {
       start: formatDate(clearAgendaStart),
-      end: formatDate(clearAgendaEnd)
+      end: formatDate(clearAgendaEnd),
+      isPast: clearAgendaStartPast || clearAgendaEndPast,
     },
     informItemOwner: {
       start: formatDate(informItemOwnerStart),
-      end: formatDate(informItemOwnerEnd)
+      end: formatDate(informItemOwnerEnd),
+      isPast: informItemOwnerStartPast,
     },
     circulateMaterials: {
       start: formatDate(circulateMaterialsStart),
-      end: formatDate(circulateMaterialsEnd)
+      end: formatDate(circulateMaterialsEnd),
+      isPast: circulateMaterialsStartPast,
     }
   };
 }
@@ -277,7 +289,10 @@ app.get("/meetingdetails", (req, res) => {
     res.render("meetingdetails.ejs", { 
         meetingData: meetingData || { ...defaultSettings },
         timeline: timeline,
-        defaultSettings: defaultSettings
+        defaultSettings: defaultSettings,
+        error:null,
+        hasPastMilestones: null,
+        isOnWeekendOrHoliday: null,
     });
 });
 
@@ -285,6 +300,10 @@ app.post("/submitdetails", (req, res) => {
   // Check if using default settings
   const useDefaultSettings = req.body.defaultSetting === 'on';
   const timelineSettings = getTimelineSettings(req.body, useDefaultSettings);
+
+  const meetingDate = new Date(req.body.meetingDate);
+  const today = new Date();
+  const isOnWeekendOrHoliday = !isWorkingDay(meetingDate);
 
   // Create meeting data object
   meetingData = {
@@ -296,11 +315,28 @@ app.post("/submitdetails", (req, res) => {
       ...timelineSettings
   };
 
+    // Check if any milestones are in the past
+    const error = meetingDate < today;
+    
+  
+    // Check if meeting date is in the past
+      if (error || isOnWeekendOrHoliday == true) {
+          return res.render("meetingdetails.ejs", {
+            meetingData: meetingData,
+            timeline: null,
+            defaultSettings: defaultSettings,
+            error: error,
+            isOnWeekendOrHoliday: isOnWeekendOrHoliday,
+          });
+        }
+
   // Calculate timeline
   timeline = calcMeetingMilestones(meetingData);
 
   console.log('Meeting Data:', meetingData); // Debug log
   console.log('Timeline:', timeline); // Debug log
+  
+  const hasPastMilestones = Object.values(timeline).some((milestone) => milestone.isPast);
 
   formattedMeetingData = {
     meetingTitle: meetingData.meetingTitle,
@@ -314,8 +350,11 @@ app.post("/submitdetails", (req, res) => {
       meetingData: meetingData,
       formattedMeetingData: formattedMeetingData,
       timeline: timeline,
-      defaultSettings: defaultSettings
-  });
+      defaultSettings: defaultSettings,
+      error: error,
+      isOnWeekendOrHoliday: isOnWeekendOrHoliday,
+      hasPastMilestones: hasPastMilestones,
+      });
 });
 
 app.post("/templates", (req, res) => {
