@@ -40,7 +40,7 @@
                 <div class="col">
                 </div>
                 <div class="col">
-                    Days to complete task  
+                    Number of working days to complete task  
                 </div>
                 <div class="col">
                     Number of weeks before meeting to start task    
@@ -103,15 +103,18 @@
             </div>
         </div>
 
-        <div class="col-12">
+        <div class="container d-flex my-2 justify-content-center">
+            <div class="col-lg-8 col-12">
             <button type="submit" class="btn btn-primary form-control">Update Timeline</button>
-        </div>
+            </div>
+         </div>
+
     </form>
 
     <% if (timeline) { %>
         <div class="container my-5" id="timelineResults">
-            <div class="row">
-                <div class="col-md-6 offset-md-3">
+            <div class="row justify-content-center">
+                <div class="col-6 col-md-10 col-xl-9">
                     <h4 style="margin-left: 1.2rem;">Meeting timeline</h4>
                     <ul class="timeline-3">
                         <li>
@@ -197,9 +200,13 @@
                     </ul>
                 </div>
             </div>
-            <form action="/templates" method="post" class="mt-3">
-                <button type="submit" class="btn btn-primary form-control">Next</button>
-            </form>
+            <div class="container d-flex justify-content-center">
+                <div class="col-lg-8 col-12"> 
+                    <form action="/templates" method="post" class="mt-3">
+                            <button type="submit" class="btn btn-primary form-control">Next</button>
+                        </form>
+                </div>
+            </div>
         </div>
     <% } %>
 </div>

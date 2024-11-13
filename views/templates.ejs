@@ -4,10 +4,10 @@
     <h3>Meeting details</h3>
     <% if (locals.meetingData) { %>
     <ul>
-        <li>Meeting Title: <%= meetingData.meetingTitle %></li>
-        <li>Date: <%= meetingData.meetingDate %></li>
-        <li>Time: <%= meetingData.startTime %> to <%= meetingData.endTime %></li>
-        <li>Venue: <%= meetingData.meetingVenue %></li>
+        <li>Meeting Title: <%= formattedMeetingData.meetingTitle %></li>
+        <li>Date: <%= formattedMeetingData.meetingDate %></li> <!-- Use formattedMeetingData here -->
+        <li>Time: <%= formattedMeetingData.startTime %> to <%= formattedMeetingData.endTime %></li> <!-- Use formattedMeetingData here -->
+        <li>Venue: <%= formattedMeetingData.meetingVenue %></li>
     <% } %>
     </ul>
 
@@ -21,7 +21,6 @@
     <h3>Meeting invite</h3>
     <add-to-calendar-button
         name="<%= meetingData.meetingTitle %>"
-        description="Main meeting"
         startDate="<%= meetingData.meetingDate %>"
         endDate="<%= meetingData.meetingDate %>"
         startTime="<%= meetingData.startTime %>"
@@ -53,10 +52,10 @@
         <div id="callForAgenda" class="accordion-collapse collapse show">
           <div class="accordion-body">
               <div class="email-preview">
-                  <strong>Subject:</strong> [Call for agenda] <%= meetingData.meetingTitle %>
+                  <strong>Subject:</strong> [Call for agenda] <%= formattedMeetingData.meetingTitle %>
                   <hr>
                   <div class="email-body">
-                      <%- templates.CALL_FOR_AGENDA.body(meetingData, timeline).replace(/\n/g, '<br>') %>
+                      <%- templates.CALL_FOR_AGENDA.body(formattedMeetingData, timeline).replace(/\n/g, '<br>') %>
                   </div>
               </div>
               <div class="mt-3">
@@ -76,10 +75,10 @@
         <div id="clearAgenda" class="accordion-collapse collapse">
           <div class="accordion-body">
             <div class="email-preview">
-              <strong>Subject:</strong> [For clearance] Agenda for <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %>
+              <strong>Subject:</strong> [For clearance] Agenda for <%= formattedMeetingData.meetingTitle %> on <%= formattedMeetingData.meetingDate %>
               <hr>
               <div class="email-body">
-                  <%- templates.SEEK_CLEARANCE.body(meetingData, timeline).replace(/\n/g, '<br>') %>
+                  <%- templates.SEEK_CLEARANCE.body(formattedMeetingData, timeline).replace(/\n/g, '<br>') %>
               </div>
           </div>
           <div class="mt-3">
@@ -99,10 +98,10 @@
         <div id="informItemOwner" class="accordion-collapse collapse">
           <div class="accordion-body">
             <div class="email-preview">
-              <strong>Subject:</strong> [Action required] Materials and admin arrangements for <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %>
+              <strong>Subject:</strong> [Action required] Materials and admin arrangements for <%= formattedMeetingData.meetingTitle %> on <%= formattedMeetingData.meetingDate %>
               <hr>
               <div class="email-body">
-                  <%- templates.INFORM_ITEM_OWNERS.body(meetingData, timeline).replace(/\n/g, '<br>') %>
+                  <%- templates.INFORM_ITEM_OWNERS.body(formattedMeetingData, timeline).replace(/\n/g, '<br>') %>
               </div>
           </div>
           <div class="mt-3">
@@ -122,10 +121,10 @@
         <div id="circulateMaterials" class="accordion-collapse collapse">
           <div class="accordion-body">
             <div class="email-preview">
-              <strong>Subject:</strong> [For information] Materials for <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %>
+              <strong>Subject:</strong> [For information] Materials for <%= formattedMeetingData.meetingTitle %> on <%= formattedMeetingData.meetingDate %>
               <hr>
               <div class="email-body">
-                  <%- templates.CIRCULATE_MATERIALS.body(meetingData, timeline).replace(/\n/g, '<br>') %>
+                  <%- templates.CIRCULATE_MATERIALS.body(formattedMeetingData, timeline).replace(/\n/g, '<br>') %>
               </div>
           </div>
           <div class="mt-3">
@@ -139,7 +138,12 @@
       
     </div>
     <p></p>
-    <a class="btn btn-primary" href="/completed" role="button">Next</a>
+    <div class="container d-flex justify-content-center py-4">
+      <div class="col-lg-8 col-12">
+        <a class="btn btn-success form-control" href="/completed" role="button">Finish</a> 
+      </div>
+  </div>
+
     </div>
   <% } %>
 <%- include("partials/footer.ejs") %>

@@ -17,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Store meeting data globally (consider using a database in production)
 let meetingData = null;
 let timeline = null;
+let formattedMeetingData = null;
 
 // Default timeline settings
 const defaultSettings = {
@@ -30,6 +31,82 @@ const defaultSettings = {
     priorCirculate: 1
 };
 
+// Singapore public holidays for 2024
+const SG_HOLIDAYS_2024 = [
+    '2024-01-01', // New Year's Day
+    '2024-02-10', // Chinese New Year Day 1
+    '2024-02-11', // Chinese New Year Day 2
+    '2024-03-29', // Good Friday
+    '2024-04-10', // Hari Raya Puasa
+    '2024-05-01', // Labour Day
+    '2024-05-22', // Vesak Day
+    '2024-06-17', // Hari Raya Haji
+    '2024-08-09', // National Day
+    '2024-11-02', // Deepavali
+    '2024-12-25'  // Christmas Day
+  ];
+  
+  function isWeekend(date) {
+    const day = date.getDay();
+    return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
+  }
+  
+  function isHoliday(date) {
+    const dateString = date.toISOString().split('T')[0];
+    return SG_HOLIDAYS_2024.includes(dateString);
+  }
+  
+  function isWorkingDay(date) {
+    return !isWeekend(date) && !isHoliday(date);
+  }
+  
+  function addWorkingDays(startDate, days) {
+    const date = new Date(startDate);
+    let workingDays = days;
+    
+    while (workingDays > 0) {
+      date.setDate(date.getDate() + 1);
+      if (isWorkingDay(date)) {
+        workingDays--;
+      }
+    }
+    
+    return date;
+  }
+
+  function subtractWorkingWeeks(date, weeks) {
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+    const approximateDays = Math.ceil(weeks * 7);
+    let result = new Date(date.getTime() - (approximateDays * millisecondsPerDay));
+    
+    // Adjust to find the nearest working day
+    while (!isWorkingDay(result)) {
+      result.setDate(result.getDate() - 1);
+    }
+    
+    return result;
+  }
+
+  function formatDate(date) {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const dayName = days[date.getDay()];
+    
+    return `${day} ${month} ${year} (${dayName})`;
+  }
+
+  function formatTime(time) {
+    const [hours, minutes] = time.split(':');
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    const formattedHours = hours % 12 || 12;
+  
+    return `${formattedHours}:${minutes}${ampm}`;
+  }
+  
 function getTimelineSettings(formData, useDefault) {
     if (useDefault) {
         return { ...defaultSettings };
@@ -52,42 +129,38 @@ function calcMeetingMilestones(meetingDetails) {
     }
 
     const meetingDate = new Date(meetingDetails.meetingDate);
-    
-    // Convert weeks to milliseconds
-    const weekInMs = 7 * 24 * 60 * 60 * 1000;
-    const dayInMs = 24 * 60 * 60 * 1000;
 
-    // Calculate start and end dates for each milestone
-    const callAgendaStart = new Date(meetingDate.getTime() - (meetingDetails.priorAgenda * weekInMs));
-    const callAgendaEnd = new Date(callAgendaStart.getTime() + (meetingDetails.daysAgenda * dayInMs));
-    
-    const clearAgendaStart = new Date(meetingDate.getTime() - (meetingDetails.priorClear * weekInMs));
-    const clearAgendaEnd = new Date(clearAgendaStart.getTime() + (meetingDetails.daysClear * dayInMs));
-    
-    const informItemOwnerStart = new Date(clearAgendaEnd.getTime());
-    const informItemOwnerEnd = new Date(informItemOwnerStart.getTime() + dayInMs);
-    
-    const circulateMaterialsStart = new Date(meetingDate.getTime() - (meetingDetails.priorCirculate * weekInMs));
-    const circulateMaterialsEnd = new Date(circulateMaterialsStart.getTime() + (meetingDetails.daysCirculate * dayInMs));
+  // Calculate start and end dates for each milestone
+  const callAgendaStart = subtractWorkingWeeks(new Date(meetingDate), meetingDetails.priorAgenda);
+  const callAgendaEnd = addWorkingDays(new Date(callAgendaStart), meetingDetails.daysAgenda);
 
-    return {
-        callAgenda: {
-            start: callAgendaStart.toLocaleDateString(),
-            end: callAgendaEnd.toLocaleDateString()
-        },
-        clearAgenda: {
-            start: clearAgendaStart.toLocaleDateString(),
-            end: clearAgendaEnd.toLocaleDateString()
-        },
-        informItemOwner: {
-            start: informItemOwnerStart.toLocaleDateString(),
-            end: informItemOwnerEnd.toLocaleDateString()
-        },
-        circulateMaterials: {
-            start: circulateMaterialsStart.toLocaleDateString(),
-            end: circulateMaterialsEnd.toLocaleDateString()
-        }
-    };
+  const clearAgendaStart = subtractWorkingWeeks(new Date(meetingDate), meetingDetails.priorClear);
+  const clearAgendaEnd = addWorkingDays(new Date(clearAgendaStart), meetingDetails.daysClear);
+
+  const informItemOwnerStart = new Date(clearAgendaEnd);
+  const informItemOwnerEnd = addWorkingDays(new Date(informItemOwnerStart), 1);
+
+  const circulateMaterialsStart = subtractWorkingWeeks(new Date(meetingDate), meetingDetails.priorCirculate);
+  const circulateMaterialsEnd = addWorkingDays(new Date(circulateMaterialsStart), meetingDetails.daysCirculate);
+
+  return {
+    callAgenda: {
+      start: formatDate(callAgendaStart),
+      end: formatDate(callAgendaEnd)
+    },
+    clearAgenda: {
+      start: formatDate(clearAgendaStart),
+      end: formatDate(clearAgendaEnd)
+    },
+    informItemOwner: {
+      start: formatDate(informItemOwnerStart),
+      end: formatDate(informItemOwnerEnd)
+    },
+    circulateMaterials: {
+      start: formatDate(circulateMaterialsStart),
+      end: formatDate(circulateMaterialsEnd)
+    }
+  };
 }
 
 // script for emailTemplates
@@ -100,7 +173,7 @@ Dear all,
 
 <b>[Call for agenda] ${meetingData.meetingTitle}</b>
 
-This is a call for agenda for the ${meetingData.meetingTitle} scheduled for ${meetingData.meetingDate}, ${meetingData.startTime} - ${meetingData.endTime} at ${meetingData.meetingVenue}.
+This is a call for agenda for the ${meetingData.meetingTitle} scheduled for ${formattedMeetingData.meetingDate}, ${formattedMeetingData.startTime} - ${formattedMeetingData.endTime} at ${meetingData.meetingVenue}.
 
 Please indicate your items in the following format by <u>${timeline.callAgenda.end}</u>:
 <table class="table table-bordered border-black"><thead><tr><th scope="col">#</th><th scope="col">Item title</th><th scope="col">Item description</th><th scope="col">Purpose (for information /discussion /approval)</th><th scope="col">Duration (minutes)</th><th scope="col">Presenter</th></tr></thead>
@@ -112,13 +185,13 @@ Best regards,
   },
 
   SEEK_CLEARANCE: {
-    subject: (meetingTitle, meetingDate) => `[For clearance] Agenda for ${meetingData.meetingTitle} on ${meetingData.meetingDate}`,
+    subject: (meetingTitle, meetingDate) => `[For clearance] Agenda for ${meetingData.meetingTitle} on ${formattedMeetingData.meetingDate}`,
     body: (data) => `
 Dear <mark>[Approving Authority]</mark>,
 
-<b>[For clearance] Agenda for ${meetingData.meetingTitle} on ${meetingData.meetingDate}</b>
+<b>[For clearance] Agenda for ${meetingData.meetingTitle} on ${formattedMeetingData.meetingDate}</b>
 
-This seeks your clearance for the agenda for the ${meetingData.meetingTitle} scheduled for ${meetingData.meetingDate}, ${meetingData.startTime} - ${meetingData.endTime} at ${meetingData.meetingVenue}.
+This seeks your clearance for the agenda for the ${meetingData.meetingTitle} scheduled for ${formattedMeetingData.meetingDate}, ${formattedMeetingData.startTime} - ${formattedMeetingData.endTime} at ${meetingData.meetingVenue}.
 
 <mark>[Insert agenda table here]</mark>
 
@@ -130,11 +203,11 @@ Best regards,
   },
 
   INFORM_ITEM_OWNERS: {
-    subject: (meetingTitle, meetingDate) => `[Action required] Materials and admin arrangements for ${meetingData.meetingTitle} on ${meetingData.meetingDate}`,
+    subject: (meetingTitle, meetingDate) => `[Action required] Materials and admin arrangements for ${meetingData.meetingTitle} on ${formattedMeetingData.meetingDate}`,
     body: (data, timeline) => `
 Dear all,
 
-Your item has been included in the agenda for the ${meetingData.meetingTitle} scheduled for ${meetingData.meetingDate}, ${meetingData.startTime} - ${meetingData.endTime} at ${meetingData.meetingVenue}.
+Your item has been included in the agenda for the ${meetingData.meetingTitle} scheduled for ${formattedMeetingData.meetingDate}, ${formattedMeetingData.startTime} - ${formattedMeetingData.endTime} at ${meetingData.meetingVenue}.
 
 <mark>[Insert agenda table here]</mark>
 
@@ -149,16 +222,16 @@ Best regards,
   },
 
   CIRCULATE_MATERIALS: {
-    subject: (meetingTitle, meetingDate) => `[For information] Materials for ${meetingData.meetingTitle} on ${meetingData.meetingDate}`,
+    subject: (meetingTitle, meetingDate) => `[For information] Materials for ${meetingData.meetingTitle} on ${formattedMeetingData.meetingDate}`,
     body: (data) => `
 Dear all,
 
-<b>[For information] Materials for ${meetingData.meetingTitle} on ${meetingData.meetingDate}</b>
+<b>[For information] Materials for ${meetingData.meetingTitle} on ${formattedMeetingData.meetingDate}</b>
 
 Please find attached the materials for the ${meetingData.meetingTitle} scheduled for:
 
-<b>Date: ${meetingData.meetingDate}
-Time: ${meetingData.startTime} - ${meetingData.endTime}
+<b>Date: ${formattedMeetingData.meetingDate}
+Time: ${formattedMeetingData.startTime} - ${formattedMeetingData.endTime}
 Venue: ${meetingData.meetingVenue}</b>
 
 <mark>[Insert agenda table here with attachments/file links]</mark>
@@ -173,7 +246,7 @@ Best regards,
 
 // Function to generate MIME message
 
-function generateMimeMessage(template, meetingData, timeline) {
+function generateMimeMessage(template, formattedMeetingData, timeline) {
   const msg = createMimeMessage();
   
   // Set basic email properties
@@ -183,8 +256,8 @@ function generateMimeMessage(template, meetingData, timeline) {
   
   // Get template content
   const templateData = EMAIL_TEMPLATES[template];
-  const subject = templateData.subject(meetingData.meetingTitle, meetingData.meetingDate);
-  const body = templateData.body(meetingData, timeline);
+  const subject = templateData.subject(formattedMeetingData.meetingTitle, formattedMeetingData.meetingDate);
+  const body = templateData.body(formattedMeetingData, timeline);
   
   // Set subject and body
   msg.setSubject(subject);
@@ -229,9 +302,17 @@ app.post("/submitdetails", (req, res) => {
   console.log('Meeting Data:', meetingData); // Debug log
   console.log('Timeline:', timeline); // Debug log
 
+  formattedMeetingData = {
+    meetingTitle: meetingData.meetingTitle,
+    meetingDate: formatDate(new Date(meetingData.meetingDate)),
+    startTime: formatTime(meetingData.startTime),
+    endTime: formatTime(meetingData.endTime),
+    meetingVenue: meetingData.meetingVenue,
+  };
   // Render the page with both meetingData and timeline
   res.render("meetingdetails.ejs", { 
       meetingData: meetingData,
+      formattedMeetingData: formattedMeetingData,
       timeline: timeline,
       defaultSettings: defaultSettings
   });
@@ -240,22 +321,47 @@ app.post("/submitdetails", (req, res) => {
 app.post("/templates", (req, res) => {
     if (meetingData) {
         timeline = calcMeetingMilestones(meetingData);
-    }
-    
+       
+        formattedMeetingData = {
+            meetingTitle: meetingData.meetingTitle,
+            meetingDate: formatDate(new Date(meetingData.meetingDate)),
+            startTime: formatTime(meetingData.startTime),
+            endTime: formatTime(meetingData.endTime),
+            meetingVenue: meetingData.meetingVenue,
+          };
+     
     res.render("templates.ejs", { 
         meetingData: meetingData,
+        formattedMeetingData: formattedMeetingData,
         timeline: timeline,
         templates: EMAIL_TEMPLATES,
     });
+} else {
+    res.render("templates.ejs", {
+        meetingData: null,
+        formattedMeetingData: null,
+        timeline: null,
+        templates: EMAIL_TEMPLATES
+    });
+} 
 });
 
 app.get("/templates", (req, res) => {
     if (meetingData) {
         timeline = calcMeetingMilestones(meetingData);
     }
-    
+
+   formattedMeetingData = {
+        meetingTitle: meetingData.meetingTitle,
+        meetingDate: formatDate(new Date(meetingData.meetingDate)),
+        startTime: formatTime(meetingData.startTime),
+        endTime: formatTime(meetingData.endTime),
+        meetingVenue: meetingData.meetingVenue,
+      };
+
     res.render("templates.ejs", { 
         meetingData: meetingData,
+        formattedMeetingData: formattedMeetingData,
         timeline: timeline,
         templates: EMAIL_TEMPLATES,
     });
@@ -269,7 +375,7 @@ app.get("/generate-email/:template", (req, res) => {
         return res.status(400).send("Invalid request");
     }
     
-    const msg = generateMimeMessage(template, meetingData, timeline);
+    const msg = generateMimeMessage(template, formattedMeetingData, timeline);
     
     // Set headers for file download
     res.setHeader('Content-Type', 'message/rfc822');
@@ -284,6 +390,9 @@ app.get("/generate-email/:template", (req, res) => {
 // });
 
 app.get("/completed", (req, res) => {
+  // Clear the meetingData variable
+  meetingData = null;
+  timeline = null;
     res.render("completed.ejs");
 });
 
