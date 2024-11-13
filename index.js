@@ -130,23 +130,23 @@ app.post("/submitdetails", (req, res) => {
   });
 });
 
-app.post("/calendar", (req, res) => {
+app.post("/templates", (req, res) => {
     if (meetingData) {
         timeline = calcMeetingMilestones(meetingData);
     }
     
-    res.render("calendar.ejs", { 
+    res.render("templates.ejs", { 
         meetingData: meetingData,
         timeline: timeline 
     });
 });
 
-app.get("/calendar", (req, res) => {
+app.get("/templates", (req, res) => {
     if (meetingData) {
         timeline = calcMeetingMilestones(meetingData);
     }
     
-    res.render("calendar.ejs", { 
+    res.render("templates.ejs", { 
         meetingData: meetingData,
         timeline: timeline 
     });

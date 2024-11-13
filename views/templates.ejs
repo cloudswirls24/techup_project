@@ -1,0 +1,121 @@
+<%- include("partials/header.ejs") %>
+
+<div class="container">
+    <h3>Meeting details</h3>
+    <% if (locals.meetingData) { %>
+    <ul>
+        <li>Meeting Title: <%= meetingData.meetingTitle %></li>
+        <li>Date: <%= meetingData.meetingDate %></li>
+        <li>Time: <%= meetingData.startTime %> to <%= meetingData.endTime %></li>
+        <li>Venue: <%= meetingData.meetingVenue %></li>
+    <% } %>
+    </ul>
+
+    <!-- Debug output -->
+    <% if (locals.timeline) { %>
+        <div style="display: none">
+        Timeline data: <%= JSON.stringify(timeline) %>
+        </div>
+        <% } %>
+
+    <h3>Meeting invite</h3>
+    <add-to-calendar-button
+        name="<%= meetingData.meetingTitle %>"
+        description="Main meeting"
+        startDate="<%= meetingData.meetingDate %>"
+        endDate="<%= meetingData.meetingDate %>"
+        startTime="<%= meetingData.startTime %>"
+        endTime="<%= meetingData.endTime %>"
+        location="<%= meetingData.meetingVenue %>"
+        options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
+        timeZone="Asia/Singapore"
+        trigger="click"
+        inline
+        listStyle="modal"
+        iCalFileName="Meeting-Event">
+    </add-to-calendar-button>
+   
+    <h3>Email templates</h3>
+    <div class="container">
+    <div class="accordion" id="accordionPanelsStayOpenExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+            Call for agenda
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+          <div class="accordion-body">
+            <% if (locals.meetingData) { %>
+              <strong><p>[Call for agenda] <%= meetingData.meetingTitle %> </p></strong>
+              
+              <p>This is a call for agenda for the <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %>, <%= meetingData.startTime %> - <%= meetingData.endTime %> at <%= meetingData.meetingVenue %>. Please indicate your item in the following format by <%= timeline.callAgenda.end %>:</p>
+              
+              <p>Thank you.</p>
+              
+              <% } %>
+            </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+            Seek clearance for agenda
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            <% if (locals.meetingData) { %>
+
+              <strong><p>[For clearance] Agenda for <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %> </p></strong>
+          
+          <p>This seeks your clearance for the agenda for the <%= meetingData.meetingTitle %> on <%= meetingData.meetingDate %>, <%= meetingData.startTime %> - <%= meetingData.endTime %> at <%= meetingData.meetingVenue %>, please. </p>
+          
+          <p>Thank you.</p>
+          
+          <% } %>
+            </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+            Inform item owners of meeting arrangements
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            <!-- <%- include("partials/itemowners.ejs") %> -->
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+            Admin arrangements for attendance, security clearance, parking
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            <!-- <%- include("partials/admin.ejs") %> -->
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+            Circulation of materials
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            <!-- <%- include("partials/circulate.ejs") %> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <p></p>
+    <a class="btn btn-primary" href="/completed" role="button">Next</a>
+    </div>
+
+<%- include("partials/footer.ejs") %>

@@ -2,7 +2,6 @@
 
 <div class="container">
     <h3>1) Meeting details</h3>
-    <!-- Notice this form now wraps both meeting details and timeline settings -->
     <form action="/submitdetails" method="post" class="row g-3">
         <!-- Meeting Details Section -->
         <div class="col-md-12">
@@ -110,35 +109,95 @@
     </form>
 
     <% if (timeline) { %>
-        <div class="container my-5">
+        <div class="container my-5" id="timelineResults">
             <div class="row">
                 <div class="col-md-6 offset-md-3">
                     <h4 style="margin-left: 1.2rem;">Meeting timeline</h4>
                     <ul class="timeline-3">
                         <li>
-                            <a href="#!">Call for agenda</a>
+                            <a href="#!">Call for agenda</a> 
                             <a href="#!" class="float-end"><%= timeline.callAgenda.start %> to <%= timeline.callAgenda.end %></a>
                             <p class="mt-2">Send out call for agenda items to all meeting participants.</p>
+                            <p><add-to-calendar-button
+                                name="Call for Agenda - <%= meetingData.meetingTitle %>"
+                                description="Deadline to submit agenda items"
+                                startDate="<%= new Date(timeline.callAgenda.start).toISOString().split('T')[0] %>"
+                                endDate="<%= new Date(timeline.callAgenda.end).toISOString().split('T')[0] %>"
+                                startTime="09:00"
+                                endTime="17:00"
+                                location="<%= meetingData.meetingVenue %>"
+                                options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
+                                timeZone="Asia/Singapore"
+                                trigger="click"
+                                inline
+                                listStyle="modal"
+                                iCalFileName="Agenda-Deadline">
+                            </add-to-calendar-button></p>
                         </li>
                         <li>
                             <a href="#!">Clear agenda with meeting chair</a>
                             <a href="#!" class="float-end"><%= timeline.clearAgenda.start %> to <%= timeline.clearAgenda.end %></a>
                             <p class="mt-2">Submit draft agenda to meeting chair for review and clearance.</p>
+                            <p><add-to-calendar-button
+                                name="Clear agenda - <%= meetingData.meetingTitle %>"
+                                description="Deadline to clear agenda with meeting chair"
+                                startDate="<%= new Date(timeline.clearAgenda.start).toISOString().split('T')[0] %>"
+                                endDate="<%= new Date(timeline.clearAgenda.end).toISOString().split('T')[0] %>"
+                                startTime="09:00"
+                                endTime="17:00"
+                                location="<%= meetingData.meetingVenue %>"
+                                options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
+                                timeZone="Asia/Singapore"
+                                trigger="click"
+                                inline
+                                listStyle="modal"
+                                iCalFileName="Clear-Agenda-Deadline">
+                            </add-to-calendar-button></p>
                         </li>
                         <li>
                             <a href="#!">Update item owners of cleared agenda</a>
                             <a href="#!" class="float-end"><%= timeline.informItemOwner.start %> to <%= timeline.informItemOwner.end %></a>
                             <p class="mt-2">Share instructions on submission of materials and administrative requirements.</p>
+                            <p><add-to-calendar-button
+                                name="Update item owners of agenda - <%= meetingData.meetingTitle %>"
+                                description="Deadline to update item owners of agenda and admin instructions"
+                                startDate="<%= new Date(timeline.informItemOwner.start).toISOString().split('T')[0] %>"
+                                endDate="<%= new Date(timeline.informItemOwner.end).toISOString().split('T')[0] %>"
+                                startTime="09:00"
+                                endTime="17:00"
+                                location="<%= meetingData.meetingVenue %>"
+                                options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
+                                timeZone="Asia/Singapore"
+                                trigger="click"
+                                inline
+                                listStyle="modal"
+                                iCalFileName="Inform-Item-Owners-Deadline">
+                            </add-to-calendar-button></p>
                         </li>
                         <li>
                             <a href="#!">Circulate materials for meeting</a>
                             <a href="#!" class="float-end"><%= timeline.circulateMaterials.start %> to <%= timeline.circulateMaterials.end %></a>
                             <p class="mt-2">Compile and circulate all meeting materials to participants.</p>
+                            <p><add-to-calendar-button
+                                name="Circulate Materials - <%= meetingData.meetingTitle %>"
+                                description="Deadline to circulate meeting materials"
+                                startDate="<%= new Date(timeline.circulateMaterials.start).toISOString().split('T')[0] %>"
+                                endDate="<%= new Date(timeline.circulateMaterials.end).toISOString().split('T')[0] %>"
+                                startTime="09:00"
+                                endTime="17:00"
+                                location="<%= meetingData.meetingVenue %>"
+                                options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
+                                timeZone="Asia/Singapore"
+                                trigger="click"
+                                inline
+                                listStyle="modal"
+                                iCalFileName="Materials-Deadline">
+                            </add-to-calendar-button></p>
                         </li>
                     </ul>
                 </div>
             </div>
-            <form action="/calendar" method="post" class="mt-3">
+            <form action="/templates" method="post" class="mt-3">
                 <button type="submit" class="btn btn-primary form-control">Next</button>
             </form>
         </div>
@@ -146,6 +205,17 @@
 </div>
 
 <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const timelineResults = document.getElementById('timelineResults');
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (timelineResults) {
+            timelineResults.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start'
+            });
+        }
+    });
     // Get the checkbox and all form fields
     const toggleCheckbox = document.querySelector("#flexCheckChecked");
     const formFields = document.querySelectorAll("#timeline input[type='number']");
