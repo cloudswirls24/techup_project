@@ -14,6 +14,99 @@ const port = 5000;
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const collectionId = "691";
+const baseUrl = "https://api-production.data.gov.sg/v2/public/api/collections/";
+
+async function fetchPublicHolidays() {
+    try {
+    // First API call to get metadata and child datasets
+    const metadataResponse = await fetch(`${baseUrl}${collectionId}/metadata`);
+    if (!metadataResponse.ok) {
+      throw new Error('Failed to fetch metadata');
+    }
+    const metadata = await metadataResponse.json();
+
+    const collectionMetadata = metadata.data.collectionMetadata;
+    console.log('Collection ID:', collectionMetadata.collectionId);
+    console.log('Collection Name:', collectionMetadata.name);
+    console.log('Child Datasets Array:', collectionMetadata.childDatasets);
+
+    // Extract childDatasets directly from collectionMetadata
+    const childDatasets = collectionMetadata.childDatasets;
+    
+    if (!childDatasets || !Array.isArray(childDatasets)) {
+      throw new Error('Child datasets not found or not in expected format');
+    }
+
+    // Array to store all holiday dates
+    let allHolidays = [];
+
+    // Fetch data for each child dataset
+    const childDataPromises = childDatasets.map(async (datasetId) => {
+      console.log('Fetching dataset:', datasetId);
+      const datasetResponse = await fetch(
+        `https://data.gov.sg/api/action/datastore_search?resource_id=${datasetId}`
+      );
+      if (!datasetResponse.ok) {
+        throw new Error(`Failed to fetch dataset ${datasetId}`);
+      }
+      return datasetResponse.json();
+    });
+
+    // Wait for all child dataset requests to complete
+    const childDataResults = await Promise.all(childDataPromises);
+    
+    // Process each dataset and extract holidays
+    childDataResults.forEach(dataset => {
+      if (dataset.success && dataset.result && dataset.result.records) {
+        const holidays = dataset.result.records.map(record => ({
+          date: record.date,
+          holiday: record.holiday,
+          day: record.day
+        }));
+        allHolidays = [...allHolidays, ...holidays];
+      }
+    });
+
+    // Sort holidays by date
+    allHolidays.sort((a, b) => new Date(a.date) - new Date(b.date));
+    console.log('All public holidays:', allHolidays);
+    return allHolidays;
+
+  } catch (error) {
+    console.error('Detailed error:', error);
+    throw error;
+  }
+}
+  
+  // Declare SG_HOLIDAYS variable
+  let SG_HOLIDAYS = [
+    '2024-01-01', // New Year's Day
+    '2024-02-10', // Chinese New Year Day 1
+    '2024-02-11', // Chinese New Year Day 2
+    '2024-03-29', // Good Friday
+    '2024-04-10', // Hari Raya Puasa
+    '2024-05-01', // Labour Day
+    '2024-05-22', // Vesak Day
+    '2024-06-17', // Hari Raya Haji
+    '2024-08-09', // National Day
+    '2024-11-02', // Deepavali
+    '2024-12-25'  // Christmas Day
+  ];
+  
+  // Call the function and update SG_HOLIDAYS
+  fetchPublicHolidays()
+    .then(holidays => {
+      // Update SG_HOLIDAYS with just the dates from the API response
+      SG_HOLIDAYS = holidays.map(holiday => holiday.date);
+      console.log('Updated SG_HOLIDAYS:', SG_HOLIDAYS);
+    })
+    .catch(error => {
+      console.error('Failed to fetch holidays:', error);
+      // Keep the default SG_HOLIDAYS if the API call fails
+    });
+  
+
 // Store meeting data globally (consider using a database in production)
 let meetingData = null;
 let timeline = null;
@@ -31,21 +124,6 @@ const defaultSettings = {
     priorCirculate: 1
 };
 
-// Singapore public holidays for 2024
-const SG_HOLIDAYS_2024 = [
-    '2024-01-01', // New Year's Day
-    '2024-02-10', // Chinese New Year Day 1
-    '2024-02-11', // Chinese New Year Day 2
-    '2024-03-29', // Good Friday
-    '2024-04-10', // Hari Raya Puasa
-    '2024-05-01', // Labour Day
-    '2024-05-22', // Vesak Day
-    '2024-06-17', // Hari Raya Haji
-    '2024-08-09', // National Day
-    '2024-11-02', // Deepavali
-    '2024-12-25'  // Christmas Day
-  ];
-  
   function isWeekend(date) {
     const day = date.getDay();
     return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
@@ -53,7 +131,7 @@ const SG_HOLIDAYS_2024 = [
   
   function isHoliday(date) {
     const dateString = date.toISOString().split('T')[0];
-    return SG_HOLIDAYS_2024.includes(dateString);
+    return SG_HOLIDAYS.includes(dateString);
   }
   
   function isWorkingDay(date) {
@@ -312,6 +390,7 @@ app.post("/submitdetails", (req, res) => {
       startTime: req.body.startTime,
       endTime: req.body.endTime,
       meetingVenue: req.body.meetingVenue,
+      defaultSetting: useDefaultSettings,
       ...timelineSettings
   };
 

@@ -1,5 +1,4 @@
 <%- include("partials/header.ejs") %>
-
 <div class="container">
     <% if (meetingData) { %>
         <% if (error) { %>
@@ -11,38 +10,58 @@
         <% }%>
      
     <% }}%>
-
-    <h3>1) Meeting details</h3>
+    <!-- <nav id="navbar" class="navbar bg-body-tertiary px-3 mb-3 sticky-top">
+        <ul class="nav nav-pills">
+          <li class="nav-item">
+            <a class="nav-link" href="#scrollspyHeading1">Enter meeting details</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#scrollspyHeading2">Timeline</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#scrollspyHeading3">Email templates</a>
+          </li>
+        </ul>
+      </nav>
+      <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+     -->
+    <h3 id="scrollspyHeading1">1) Meeting details</h3>
     <form action="/submitdetails" method="post" class="row g-3">
         <!-- Meeting Details Section -->
         <div class="col-md-12">
             <label for="meetingTitle" class="form-label">Meeting title</label>
-            <input type="text" class="form-control" id="meetingTitle" name="meetingTitle" placeholder="Meeting title" required>
+            <input type="text" class="form-control" id="meetingTitle" name="meetingTitle" 
+                value="<%= locals.meetingData ? meetingData.meetingTitle : '' %>" placeholder="Meeting title" required>
         </div>
         <div class="col-md-6">
             <label for="meetingDate" class="form-label">Date</label>
-            <input type="date" class="form-control" id="meetingDate" name="meetingDate" placeholder="Meeting date" required>
+            <input type="date" class="form-control" id="meetingDate" name="meetingDate" 
+                value="<%= locals.meetingData ? meetingData.meetingDate : '' %>" placeholder="Meeting date" required>
         </div>
         <div class="col-5 col-md-2">
             <label for="meetingStartTime" class="form-label">Time</label>
-            <input type="time" class="form-control" name="startTime" placeholder="Meeting start time" required>
+            <input type="time" class="form-control" name="startTime" 
+                value="<%= locals.meetingData ? meetingData.startTime : '' %>" placeholder="Meeting start time" required>
         </div>
         <div class="col-1 align-self-end text-center">
             to
         </div>
         <div class="col-5 col-md-2 align-self-end">
-            <input type="time" class="form-control" name="endTime" placeholder="Meeting end time" required>
+            <input type="time" class="form-control" name="endTime" 
+                value="<%= locals.meetingData ? meetingData.endTime : '' %>" placeholder="Meeting end time" required>
         </div>
         <div class="col-md-12">
             <label for="meetingVenue" class="form-label">Venue</label>
-            <input type="text" class="form-control" id="meetingVenue" name="meetingVenue" placeholder="Meeting venue" required>
+            <input type="text" class="form-control" id="meetingVenue" name="meetingVenue" 
+                value="<%= locals.meetingData ? meetingData.meetingVenue : '' %>" placeholder="Meeting venue" required>
         </div>
 
         <!-- Timeline Settings Section -->
         <div class="container mt-5" id="timeline">
             <h3>2) Timeline settings</h3>
             <div class="form-check my-3">
-                <input class="form-check-input" type="checkbox" id="flexCheckChecked" name="defaultSetting" checked>
+                <input class="form-check-input" type="checkbox" id="flexCheckChecked" name="defaultSetting" 
+                    <%= locals.meetingData && meetingData.defaultSetting ? 'checked' : '' %>>
                 <label class="form-check-label" for="flexCheckChecked">
                     Use default settings?
                 </label>
@@ -63,53 +82,61 @@
                 </div>
                 <div class="col">
                     <input type="number" class="form-control" placeholder="Days to complete task" name="daysAgenda" 
-                        value="<%= locals.meetingData ? meetingData.daysAgenda : defaultSettings.daysAgenda %>" disabled>
+                        value="<%= locals.meetingData ? meetingData.daysAgenda : defaultSettings.daysAgenda %>"
+                        <%= locals.meetingData && meetingData.defaultSetting ? 'disabled' : '' %>>
                 </div>
                 <div class="col">
                     <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorAgenda" 
-                        value="<%= locals.meetingData ? meetingData.priorAgenda : defaultSettings.priorAgenda %>" disabled>
+                        value="<%= locals.meetingData ? meetingData.priorAgenda : defaultSettings.priorAgenda %>"
+                        <%= locals.meetingData && meetingData.defaultSetting ? 'disabled' : '' %>>
                 </div>
             </div>
-
+        
             <div class="row mb-3">
                 <div class="col">
                     Seek clearance for agenda  
                 </div>
                 <div class="col">
                     <input type="number" class="form-control" placeholder="Days to complete task" name="daysClear" 
-                        value="<%= locals.meetingData ? meetingData.daysClear : defaultSettings.daysClear %>" disabled>
+                        value="<%= locals.meetingData ? meetingData.daysClear : defaultSettings.daysClear %>"
+                        <%= locals.meetingData && meetingData.defaultSetting ? 'disabled' : '' %>>
                 </div>
                 <div class="col">
                     <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorClear" 
-                        value="<%= locals.meetingData ? meetingData.priorClear : defaultSettings.priorClear %>" disabled>
+                        value="<%= locals.meetingData ? meetingData.priorClear : defaultSettings.priorClear %>"
+                        <%= locals.meetingData && meetingData.defaultSetting ? 'disabled' : '' %>>
                 </div>
             </div>
-
+        
             <div class="row mb-3">
                 <div class="col">
                     Item owners to submit materials   
                 </div>
                 <div class="col">
                     <input type="number" class="form-control" placeholder="Days to complete task" name="daysSubmitMaterials" 
-                        value="<%= locals.meetingData ? meetingData.daysSubmitMaterials : defaultSettings.daysSubmitMaterials %>" disabled>
+                        value="<%= locals.meetingData ? meetingData.daysSubmitMaterials : defaultSettings.daysSubmitMaterials %>"
+                        <%= locals.meetingData && meetingData.defaultSetting ? 'disabled' : '' %>>
                 </div>
                 <div class="col">
                     <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorSubmitMaterials" 
-                        value="<%= locals.meetingData ? meetingData.priorSubmitMaterials : defaultSettings.priorSubmitMaterials %>" disabled>
+                        value="<%= locals.meetingData ? meetingData.priorSubmitMaterials : defaultSettings.priorSubmitMaterials %>"
+                        <%= locals.meetingData && meetingData.defaultSetting ? 'disabled' : '' %>>
                 </div>
             </div>
-
+        
             <div class="row mb-3">
                 <div class="col">
                     Circulation of materials  
                 </div>
                 <div class="col">
                     <input type="number" class="form-control" placeholder="Days to complete task" name="daysCirculate" 
-                        value="<%= locals.meetingData ? meetingData.daysCirculate : defaultSettings.daysCirculate %>" disabled>
+                        value="<%= locals.meetingData ? meetingData.daysCirculate : defaultSettings.daysCirculate %>"
+                        <%= locals.meetingData && meetingData.defaultSetting ? 'disabled' : '' %>>
                 </div>
                 <div class="col">
                     <input type="number" class="form-control" placeholder="# of weeks before meeting to start task" name="priorCirculate" 
-                        value="<%= locals.meetingData ? meetingData.priorCirculate : defaultSettings.priorCirculate %>" disabled>
+                        value="<%= locals.meetingData ? meetingData.priorCirculate : defaultSettings.priorCirculate %>"
+                        <%= locals.meetingData && meetingData.defaultSetting ? 'disabled' : '' %>>
                 </div>
             </div>
         </div>
@@ -129,7 +156,7 @@
                     <% if (hasPastMilestones) { %>
                         <div class="alert alert-warning"> One or more of the calculated meeting milestones are in the past. The timeline may not be feasible!</div>
                     <% } %>
-                    <h4 style="margin-left: 1.2rem;">Meeting timeline</h4>
+                    <h4 style="margin-left: 1.2rem;" id="scrollspyHeading2">Meeting timeline</h4>
                     <ul class="timeline-3">
                         <li>
                             <a href="#!">Call for agenda</a> 
@@ -224,6 +251,7 @@
         </div>
     <% } %>
 </div>
+<!-- </div> -->
 
 <script>
         document.addEventListener('DOMContentLoaded', function() {
