@@ -61,7 +61,7 @@
             <h3>2) Timeline settings</h3>
             <div class="form-check my-3">
                 <input class="form-check-input" type="checkbox" id="flexCheckChecked" name="defaultSetting" 
-                    <%= locals.meetingData && meetingData.defaultSetting ? 'checked' : '' %>>
+                    <%= locals.meetingData && meetingData.defaultSetting ? 'checked' : '' %> checked>
                 <label class="form-check-label" for="flexCheckChecked">
                     Use default settings?
                 </label>
@@ -164,12 +164,9 @@
                             <p class="mt-2">Send out call for agenda items to all meeting participants.</p>
                             <p><add-to-calendar-button
                                 name="Call for Agenda - <%= meetingData.meetingTitle %>"
-                                description="Deadline to submit agenda items"
+                                description="Call for agenda items"
                                 startDate="<%= new Date(timeline.callAgenda.start).toISOString().split('T')[0] %>"
                                 endDate="<%= new Date(timeline.callAgenda.end).toISOString().split('T')[0] %>"
-                                startTime="09:00"
-                                endTime="17:00"
-                                location="<%= meetingData.meetingVenue %>"
                                 options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
                                 timeZone="Asia/Singapore"
                                 trigger="click"
@@ -184,12 +181,9 @@
                             <p class="mt-2">Submit draft agenda to meeting chair for review and clearance.</p>
                             <p><add-to-calendar-button
                                 name="Clear agenda - <%= meetingData.meetingTitle %>"
-                                description="Deadline to clear agenda with meeting chair"
+                                description="Clear agenda with meeting chair"
                                 startDate="<%= new Date(timeline.clearAgenda.start).toISOString().split('T')[0] %>"
                                 endDate="<%= new Date(timeline.clearAgenda.end).toISOString().split('T')[0] %>"
-                                startTime="09:00"
-                                endTime="17:00"
-                                location="<%= meetingData.meetingVenue %>"
                                 options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
                                 timeZone="Asia/Singapore"
                                 trigger="click"
@@ -201,15 +195,12 @@
                         <li>
                             <a href="#!">Update item owners of cleared agenda</a>
                             <a href="#!" class="float-end"><%= timeline.informItemOwner.start %> to <%= timeline.informItemOwner.end %></a>
-                            <p class="mt-2">Share instructions on submission of materials and administrative requirements.</p>
+                            <p class="mt-2">Share instructions on submission of materials and administrative arrangements.</p>
                             <p><add-to-calendar-button
                                 name="Update item owners of agenda - <%= meetingData.meetingTitle %>"
-                                description="Deadline to update item owners of agenda and admin instructions"
+                                description="Update item owners of agenda and admin instructions"
                                 startDate="<%= new Date(timeline.informItemOwner.start).toISOString().split('T')[0] %>"
                                 endDate="<%= new Date(timeline.informItemOwner.end).toISOString().split('T')[0] %>"
-                                startTime="09:00"
-                                endTime="17:00"
-                                location="<%= meetingData.meetingVenue %>"
                                 options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
                                 timeZone="Asia/Singapore"
                                 trigger="click"
@@ -224,12 +215,9 @@
                             <p class="mt-2">Compile and circulate all meeting materials to participants.</p>
                             <p><add-to-calendar-button
                                 name="Circulate Materials - <%= meetingData.meetingTitle %>"
-                                description="Deadline to circulate meeting materials"
+                                description="Circulate meeting materials"
                                 startDate="<%= new Date(timeline.circulateMaterials.start).toISOString().split('T')[0] %>"
                                 endDate="<%= new Date(timeline.circulateMaterials.end).toISOString().split('T')[0] %>"
-                                startTime="09:00"
-                                endTime="17:00"
-                                location="<%= meetingData.meetingVenue %>"
                                 options="['Apple','Google','iCal','Microsoft365','Outlook.com']"
                                 timeZone="Asia/Singapore"
                                 trigger="click"
